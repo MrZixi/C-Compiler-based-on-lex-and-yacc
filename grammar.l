@@ -64,17 +64,17 @@ IS          ((u|U)|(u|U)?(l|L|ll|LL)|(l|L|ll|LL)(u|U))
 
 {L}({L}|{D})*		{ count(); return(check_type()); }
 
-0[xX]{H}+{IS}?		{ count(); return(CONSTANT); }
-0[0-7]*{IS}?		{ count(); return(CONSTANT); }
-[1-9]{D}*{IS}?		{ count(); return(CONSTANT); }
-L?'(\\.|[^\\'\n])+'	{ count(); return(CONSTANT); }
+0[xX]{H}+{IS}?		{ count(); return(CONSTANT_INT); //16进制}
+0[0-7]*{IS}?		{ count(); return(CONSTANT_INT); //8进制整数}
+[1-9]{D}*{IS}?		{ count(); return(CONSTANT_INT); //10进制整数}
+L?'(\\.|[^\\'\n])+'	{ count(); return(CONSTANT_INT); }
 
-{D}+{E}{FS}?		{ count(); return(CONSTANT); }
-{D}*"."{D}+{E}?{FS}?	{ count(); return(CONSTANT); }
-{D}+"."{D}*{E}?{FS}?	{ count(); return(CONSTANT); }
-0[xX]{H}+{P}{FS}?	{ count(); return(CONSTANT); }
-0[xX]{H}*"."{H}+{P}{FS}?     { count(); return(CONSTANT); }
-0[xX]{H}+"."{H}*{P}{FS}?     { count(); return(CONSTANT); }
+{D}+{E}{FS}?				 { count(); return(CONSTANT_FLOAT); }
+{D}*"."{D}+{E}?{FS}?		 { count(); return(CONSTANT_FLOAT); }
+{D}+"."{D}*{E}?{FS}?		 { count(); return(CONSTANT_FLOAT); }
+0[xX]{H}+{P}{FS}?			 { count(); return(CONSTANT_FLOAT); }
+0[xX]{H}*"."{H}+{P}{FS}?     { count(); return(CONSTANT_FLOAT); }
+0[xX]{H}+"."{H}*{P}{FS}?     { count(); return(CONSTANT_FLOAT); }
 
 
 L?\"(\\.|[^\\"\n])*\"	{ count(); return(STRING_LITERAL); }
