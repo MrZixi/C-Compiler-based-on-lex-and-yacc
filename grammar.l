@@ -1,6 +1,7 @@
 %{
 #include <iostream>
 #include <stdio.h>
+#include "grammar.tab.h"
 
 void count(void);
 void comment();
@@ -9,6 +10,7 @@ int column = 0;
 
 %}
 
+%option yylineno
 
 D			[0-9]
 L			[a-zA-Z_]
@@ -131,13 +133,14 @@ L?\"(\\.|[^\\"\n])*\"	{ count(); return(STRING_LITERAL); }
 
 %%
 
-int yywrap(void)
+
+int yywrap()
 {
 	return 1;
 }
 
 
-void comment(void)
+void comment()
 {
 	char c, prev = 0;
   
@@ -151,9 +154,7 @@ void comment(void)
 }
 
 
-int column = 0;
-
-void count(void)
+void count()
 {
 	int i;
 
@@ -169,7 +170,7 @@ void count(void)
 }
 
 
-int check_type(void)
+int check_type()
 {
 /*
 * pseudo code --- this is what it should check
