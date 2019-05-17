@@ -54,6 +54,20 @@ ParseTree::ParseTree(string name, int num, ...)
             {
                 sscanf(yytext, "%x", &value);
             }
+            //10进制
+            else
+            {
+                value = atoi(yytext);
+            }
+            this->content = to_string(value);
+        }
+        else if(this->name == "CONSTANT_FLOAT")
+        {
+            this->content = yytext;
+        }
+        else if(this->name == "STRING_LITERAL")
+        {
+            this->content = yytext;
         }
     }
 }
@@ -64,4 +78,8 @@ ParseTree::ParseTree()
     next_sibling = NULL;
     content = "";
     name = "";
+}
+
+ParseTree::~ParseTree()
+{
 }
