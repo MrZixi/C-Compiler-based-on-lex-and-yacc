@@ -69,6 +69,9 @@ ParseTree::ParseTree(string name, int num, ...)
         {
             this->content = yytext;
         }
+        else if(this->name == "IDENTIFIER") {
+            this->content = yytext;
+        }
     }
 }
 

@@ -1,7 +1,7 @@
 %{
-#include <cstdlib>
-#include <cstdio>
-#include <string>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 #include "parse_tree.h"
 
 using namespace std;
@@ -35,6 +35,8 @@ void yyerror(const char*);
 %token <pt> CASE DEFAULT IF ELSE SWITCH WHILE DO FOR GOTO CONTINUE BREAK RETURN
 
 %token <pt> ';' ',' ':' '=' '[' ']' '.' '&' '!' '~' '-' '+' '*' '/' '%' '<' '>' '^' '|' '?' '{' '}' '(' ')' 
+
+%token <pt> BOOL COMPLEX IMAGINARY INLINE RESTRICT
 
 %type <pt> primary_expression postfix_expression argument_expression_list unary_expression unary_operator
 %type <pt> multiplicative_expression additive_expression shift_expression relational_expression equality_expression

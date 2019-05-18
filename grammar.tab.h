@@ -61,6 +61,11 @@ typedef union{
 #define	CONTINUE	314
 #define	BREAK	315
 #define	RETURN	316
+#define	BOOL	317
+#define	COMPLEX	318
+#define	IMAGINARY	319
+#define	INLINE	320
+#define	RESTRICT	321
 
 
 extern YYSTYPE yylval;

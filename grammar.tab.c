@@ -64,12 +64,17 @@
 #define	CONTINUE	314
 #define	BREAK	315
 #define	RETURN	316
+#define	BOOL	317
+#define	COMPLEX	318
+#define	IMAGINARY	319
+#define	INLINE	320
+#define	RESTRICT	321
 
 #line 1 "grammar.y"
 
-#include <cstdlib>
-#include <cstdio>
-#include <string>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 #include "parse_tree.h"
 
 using namespace std;
@@ -101,9 +106,9 @@ typedef union{
 
 #define	YYFINAL		352
 #define	YYFLAG		-32768
-#define	YYNTBASE	87
+#define	YYNTBASE	92
 
-#define YYTRANSLATE(x) ((unsigned)(x) <= 316 ? yytranslate[x] : 151)
+#define YYTRANSLATE(x) ((unsigned)(x) <= 321 ? yytranslate[x] : 156)
 
 static const char yytranslate[] = {     0,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -137,7 +142,8 @@ static const char yytranslate[] = {     0,
     27,    28,    29,    30,    31,    32,    33,    34,    35,    36,
     37,    38,    39,    40,    41,    42,    43,    44,    45,    46,
     47,    48,    49,    50,    51,    52,    53,    54,    55,    56,
-    57,    58,    59,    60,    61,    62
+    57,    58,    59,    60,    61,    62,    87,    88,    89,    90,
+    91
 };
 
 #if YYDEBUG != 0
@@ -166,102 +172,102 @@ static const short yyprhs[] = {     0,
    652,   656,   660
 };
 
-static const short yyrhs[] = {   148,
+static const short yyrhs[] = {   153,
      0,     3,     0,     7,     0,     8,     0,     5,     0,    85,
-   107,    86,     0,    88,     0,    89,    67,   107,    68,     0,
-    89,    85,    86,     0,    89,    85,    90,    86,     0,    89,
-    69,     3,     0,    89,     9,     3,     0,    89,    10,     0,
-    89,    11,     0,   105,     0,    90,    64,   105,     0,    89,
-     0,    10,    91,     0,    11,    91,     0,    92,    93,     0,
-     6,    91,     0,     6,    85,   134,    86,     0,    70,     0,
+   112,    86,     0,    93,     0,    94,    67,   112,    68,     0,
+    94,    85,    86,     0,    94,    85,    95,    86,     0,    94,
+    69,     3,     0,    94,     9,     3,     0,    94,    10,     0,
+    94,    11,     0,   110,     0,    95,    64,   110,     0,    94,
+     0,    10,    96,     0,    11,    96,     0,    97,    98,     0,
+     6,    96,     0,     6,    85,   139,    86,     0,    70,     0,
     75,     0,    74,     0,    73,     0,    72,     0,    71,     0,
-    91,     0,    85,   134,    86,    93,     0,    93,     0,    94,
-    75,    93,     0,    94,    76,    93,     0,    94,    77,    93,
-     0,    94,     0,    95,    74,    94,     0,    95,    73,    94,
-     0,    95,     0,    96,    12,    95,     0,    96,    13,    95,
-     0,    96,     0,    97,    78,    96,     0,    97,    79,    96,
-     0,    97,    14,    96,     0,    97,    15,    96,     0,    97,
-     0,    98,    16,    97,     0,    98,    17,    97,     0,    98,
-     0,    99,    70,    98,     0,    99,     0,   100,    80,    99,
-     0,   100,     0,   101,    81,   100,     0,   101,     0,   102,
-    18,   101,     0,   102,     0,   103,    19,   102,     0,   103,
-     0,   103,    82,   107,    65,   104,     0,   104,     0,    91,
-   106,   105,     0,    66,     0,    20,     0,    21,     0,    22,
+    96,     0,    85,   139,    86,    98,     0,    98,     0,    99,
+    75,    98,     0,    99,    76,    98,     0,    99,    77,    98,
+     0,    99,     0,   100,    74,    99,     0,   100,    73,    99,
+     0,   100,     0,   101,    12,   100,     0,   101,    13,   100,
+     0,   101,     0,   102,    78,   101,     0,   102,    79,   101,
+     0,   102,    14,   101,     0,   102,    15,   101,     0,   102,
+     0,   103,    16,   102,     0,   103,    17,   102,     0,   103,
+     0,   104,    70,   103,     0,   104,     0,   105,    80,   104,
+     0,   105,     0,   106,    81,   105,     0,   106,     0,   107,
+    18,   106,     0,   107,     0,   108,    19,   107,     0,   108,
+     0,   108,    82,   112,    65,   109,     0,   109,     0,    96,
+   111,   110,     0,    66,     0,    20,     0,    21,     0,    22,
      0,    23,     0,    24,     0,    25,     0,    26,     0,    27,
-     0,    28,     0,    29,     0,   105,     0,   107,    64,   105,
-     0,   104,     0,   110,    63,     0,   110,   111,    63,     0,
-   113,     0,   113,   110,     0,   114,     0,   114,   110,     0,
-   125,     0,   125,   110,     0,   112,     0,   111,    64,   112,
-     0,   126,     0,   126,    66,   137,     0,    31,     0,    32,
+     0,    28,     0,    29,     0,   110,     0,   112,    64,   110,
+     0,   109,     0,   115,    63,     0,   115,   116,    63,     0,
+   118,     0,   118,   115,     0,   119,     0,   119,   115,     0,
+   130,     0,   130,   115,     0,   117,     0,   116,    64,   117,
+     0,   131,     0,   131,    66,   142,     0,    31,     0,    32,
      0,    33,     0,    34,     0,    35,     0,    46,     0,    36,
      0,    37,     0,    38,     0,    39,     0,    42,     0,    43,
-     0,    40,     0,    41,     0,   115,     0,   122,     0,    30,
-     0,   116,     3,    83,   117,    84,     0,   116,    83,   117,
-    84,     0,   116,     3,     0,    47,     0,    48,     0,   118,
-     0,   117,   118,     0,   119,   120,    63,     0,   114,   119,
-     0,   114,     0,   125,   119,     0,   125,     0,   121,     0,
-   120,    64,   121,     0,   126,     0,    65,   108,     0,   126,
-    65,   108,     0,    49,    83,   123,    84,     0,    49,     3,
-    83,   123,    84,     0,    49,     3,     0,   124,     0,   123,
-    64,   124,     0,     3,     0,     3,    66,   108,     0,    44,
-     0,    45,     0,   128,   127,     0,   127,     0,     3,     0,
-    85,   126,    86,     0,   127,    67,   108,    68,     0,   127,
-    67,    68,     0,   127,    85,   130,    86,     0,   127,    85,
-   133,    86,     0,   127,    85,    86,     0,    75,     0,    75,
-   129,     0,    75,   128,     0,    75,   129,   128,     0,   125,
-     0,   129,   125,     0,   131,     0,   131,    64,    50,     0,
-   132,     0,   131,    64,   132,     0,   110,   126,     0,   110,
-   135,     0,   110,     0,     3,     0,   133,    64,     3,     0,
-   119,     0,   119,   135,     0,   128,     0,   136,     0,   128,
-   136,     0,    85,   135,    86,     0,    67,    68,     0,    67,
-   108,    68,     0,   136,    67,    68,     0,   136,    67,   108,
-    68,     0,    85,    86,     0,    85,   130,    86,     0,   136,
-    85,    86,     0,   136,    85,   130,    86,     0,   105,     0,
-    83,   138,    84,     0,    83,   138,    64,    84,     0,   137,
-     0,   138,    64,   137,     0,   140,     0,   141,     0,   144,
-     0,   145,     0,   146,     0,   147,     0,     3,    65,   139,
-     0,    51,   108,    65,   139,     0,    52,    65,   139,     0,
-    83,    84,     0,    83,   143,    84,     0,    83,   142,    84,
-     0,    83,   142,   143,    84,     0,   109,     0,   142,   109,
-     0,   139,     0,   143,   139,     0,    63,     0,   107,    63,
-     0,    53,    85,   107,    86,   139,     0,    53,    85,   107,
-    86,   139,    54,   139,     0,    55,    85,   107,    86,   139,
-     0,    56,    85,   107,    86,   139,     0,    57,   139,    56,
-    85,   107,    86,    63,     0,    58,    85,   144,   144,    86,
-   139,     0,    58,    85,   144,   144,   107,    86,   139,     0,
+     0,    40,     0,    41,     0,   120,     0,   127,     0,    30,
+     0,   121,     3,    83,   122,    84,     0,   121,    83,   122,
+    84,     0,   121,     3,     0,    47,     0,    48,     0,   123,
+     0,   122,   123,     0,   124,   125,    63,     0,   119,   124,
+     0,   119,     0,   130,   124,     0,   130,     0,   126,     0,
+   125,    64,   126,     0,   131,     0,    65,   113,     0,   131,
+    65,   113,     0,    49,    83,   128,    84,     0,    49,     3,
+    83,   128,    84,     0,    49,     3,     0,   129,     0,   128,
+    64,   129,     0,     3,     0,     3,    66,   113,     0,    44,
+     0,    45,     0,   133,   132,     0,   132,     0,     3,     0,
+    85,   131,    86,     0,   132,    67,   113,    68,     0,   132,
+    67,    68,     0,   132,    85,   135,    86,     0,   132,    85,
+   138,    86,     0,   132,    85,    86,     0,    75,     0,    75,
+   134,     0,    75,   133,     0,    75,   134,   133,     0,   130,
+     0,   134,   130,     0,   136,     0,   136,    64,    50,     0,
+   137,     0,   136,    64,   137,     0,   115,   131,     0,   115,
+   140,     0,   115,     0,     3,     0,   138,    64,     3,     0,
+   124,     0,   124,   140,     0,   133,     0,   141,     0,   133,
+   141,     0,    85,   140,    86,     0,    67,    68,     0,    67,
+   113,    68,     0,   141,    67,    68,     0,   141,    67,   113,
+    68,     0,    85,    86,     0,    85,   135,    86,     0,   141,
+    85,    86,     0,   141,    85,   135,    86,     0,   110,     0,
+    83,   143,    84,     0,    83,   143,    64,    84,     0,   142,
+     0,   143,    64,   142,     0,   145,     0,   146,     0,   149,
+     0,   150,     0,   151,     0,   152,     0,     3,    65,   144,
+     0,    51,   113,    65,   144,     0,    52,    65,   144,     0,
+    83,    84,     0,    83,   148,    84,     0,    83,   147,    84,
+     0,    83,   147,   148,    84,     0,   114,     0,   147,   114,
+     0,   144,     0,   148,   144,     0,    63,     0,   112,    63,
+     0,    53,    85,   112,    86,   144,     0,    53,    85,   112,
+    86,   144,    54,   144,     0,    55,    85,   112,    86,   144,
+     0,    56,    85,   112,    86,   144,     0,    57,   144,    56,
+    85,   112,    86,    63,     0,    58,    85,   149,   149,    86,
+   144,     0,    58,    85,   149,   149,   112,    86,   144,     0,
     59,     3,    63,     0,    60,    63,     0,    61,    63,     0,
-    62,    63,     0,    62,   107,    63,     0,   149,     0,   148,
-   149,     0,   150,     0,   109,     0,   110,   126,   142,   141,
-     0,   110,   126,   141,     0,   126,   142,   141,     0,   126,
-   141,     0
+    62,    63,     0,    62,   112,    63,     0,   154,     0,   153,
+   154,     0,   155,     0,   114,     0,   115,   131,   147,   146,
+     0,   115,   131,   146,     0,   131,   147,   146,     0,   131,
+   146,     0
 };
 
 #endif
 
 #if YYDEBUG != 0
 static const short yyrline[] = { 0,
-    57,    61,    65,    68,    71,    74,    79,    83,    86,    89,
-    92,    95,    98,   101,   106,   110,   115,   119,   122,   125,
-   128,   131,   136,   140,   143,   146,   149,   152,   157,   161,
-   166,   170,   173,   176,   181,   185,   188,   193,   197,   200,
-   205,   209,   212,   215,   218,   223,   227,   230,   235,   239,
-   244,   248,   253,   257,   262,   266,   271,   275,   280,   284,
-   289,   293,   298,   302,   305,   308,   311,   314,   317,   320,
-   323,   326,   329,   334,   338,   343,   349,   353,   358,   362,
-   365,   368,   371,   374,   379,   383,   388,   392,   397,   401,
-   404,   407,   410,   415,   419,   422,   425,   428,   431,   434,
-   437,   440,   443,   446,   449,   454,   458,   461,   466,   470,
-   475,   479,   484,   490,   494,   497,   500,   505,   509,   514,
-   518,   521,   526,   530,   533,   538,   542,   547,   551,   556,
-   560,   565,   569,   574,   578,   581,   584,   587,   590,   593,
-   598,   602,   605,   608,   613,   617,   622,   626,   631,   635,
-   640,   644,   647,   652,   656,   661,   665,   670,   674,   677,
-   682,   686,   689,   692,   695,   698,   701,   704,   707,   712,
-   716,   719,   724,   728,   733,   737,   740,   743,   746,   749,
-   754,   758,   761,   766,   770,   773,   776,   781,   785,   790,
-   794,   799,   803,   808,   812,   815,   820,   824,   827,   830,
-   835,   839,   842,   845,   848,   853,   857,   862,   866,   871,
-   875,   878,   881
+    59,    63,    67,    70,    73,    76,    81,    85,    88,    91,
+    94,    97,   100,   103,   108,   112,   117,   121,   124,   127,
+   130,   133,   138,   142,   145,   148,   151,   154,   159,   163,
+   168,   172,   175,   178,   183,   187,   190,   195,   199,   202,
+   207,   211,   214,   217,   220,   225,   229,   232,   237,   241,
+   246,   250,   255,   259,   264,   268,   273,   277,   282,   286,
+   291,   295,   300,   304,   307,   310,   313,   316,   319,   322,
+   325,   328,   331,   336,   340,   345,   351,   355,   360,   364,
+   367,   370,   373,   376,   381,   385,   390,   394,   399,   403,
+   406,   409,   412,   417,   421,   424,   427,   430,   433,   436,
+   439,   442,   445,   448,   451,   456,   460,   463,   468,   472,
+   477,   481,   486,   492,   496,   499,   502,   507,   511,   516,
+   520,   523,   528,   532,   535,   540,   544,   549,   553,   558,
+   562,   567,   571,   576,   580,   583,   586,   589,   592,   595,
+   600,   604,   607,   610,   615,   619,   624,   628,   633,   637,
+   642,   646,   649,   654,   658,   663,   667,   672,   676,   679,
+   684,   688,   691,   694,   697,   700,   703,   706,   709,   714,
+   718,   721,   726,   730,   735,   739,   742,   745,   748,   751,
+   756,   760,   763,   768,   772,   775,   778,   783,   787,   792,
+   796,   801,   805,   810,   814,   817,   822,   826,   829,   832,
+   837,   841,   844,   847,   850,   855,   859,   864,   868,   873,
+   877,   880,   883
 };
 #endif
 
@@ -277,48 +283,49 @@ static const char * const yytname[] = {   "$","error","$undefined.","IDENTIFIER"
 "DOUBLE","CONST","VOLATILE","VOID","STRUCT","UNION","ENUM","ELLIPSIS","CASE",
 "DEFAULT","IF","ELSE","SWITCH","WHILE","DO","FOR","GOTO","CONTINUE","BREAK",
 "RETURN","';'","','","':'","'='","'['","']'","'.'","'&'","'!'","'~'","'-'","'+'",
-"'*'","'/'","'%'","'<'","'>'","'^'","'|'","'?'","'{'","'}'","'('","')'","Program",
-"primary_expression","postfix_expression","argument_expression_list","unary_expression",
-"unary_operator","cast_expression","multiplicative_expression","additive_expression",
-"shift_expression","relational_expression","equality_expression","and_expression",
-"exclusive_or_expression","inclusive_or_expression","logical_and_expression",
-"logical_or_expression","conditional_expression","assignment_expression","assignment_operator",
-"expression","constant_expression","declaration","declaration_specifiers","init_declarator_list",
-"init_declarator","storage_class_specifier","type_specifier","struct_or_union_specifier",
-"struct_or_union","struct_declaration_list","struct_declaration","specifier_qualifier_list",
-"struct_declarator_list","struct_declarator","enum_specifier","enumerator_list",
-"enumerator","type_qualifier","declarator","direct_declarator","pointer","type_qualifier_list",
-"parameter_type_list","parameter_list","parameter_declaration","identifier_list",
-"type_name","abstract_declarator","direct_abstract_declarator","initializer",
-"initializer_list","statement","labeled_statement","compound_statement","declaration_list",
-"statement_list","expression_statement","selection_statement","iteration_statement",
-"jump_statement","translation_unit","external_declaration","function_definition", NULL
+"'*'","'/'","'%'","'<'","'>'","'^'","'|'","'?'","'{'","'}'","'('","')'","BOOL",
+"COMPLEX","IMAGINARY","INLINE","RESTRICT","Program","primary_expression","postfix_expression",
+"argument_expression_list","unary_expression","unary_operator","cast_expression",
+"multiplicative_expression","additive_expression","shift_expression","relational_expression",
+"equality_expression","and_expression","exclusive_or_expression","inclusive_or_expression",
+"logical_and_expression","logical_or_expression","conditional_expression","assignment_expression",
+"assignment_operator","expression","constant_expression","declaration","declaration_specifiers",
+"init_declarator_list","init_declarator","storage_class_specifier","type_specifier",
+"struct_or_union_specifier","struct_or_union","struct_declaration_list","struct_declaration",
+"specifier_qualifier_list","struct_declarator_list","struct_declarator","enum_specifier",
+"enumerator_list","enumerator","type_qualifier","declarator","direct_declarator",
+"pointer","type_qualifier_list","parameter_type_list","parameter_list","parameter_declaration",
+"identifier_list","type_name","abstract_declarator","direct_abstract_declarator",
+"initializer","initializer_list","statement","labeled_statement","compound_statement",
+"declaration_list","statement_list","expression_statement","selection_statement",
+"iteration_statement","jump_statement","translation_unit","external_declaration",
+"function_definition", NULL
 };
 #endif
 
 static const short yyr1[] = {     0,
-    87,    88,    88,    88,    88,    88,    89,    89,    89,    89,
-    89,    89,    89,    89,    90,    90,    91,    91,    91,    91,
-    91,    91,    92,    92,    92,    92,    92,    92,    93,    93,
-    94,    94,    94,    94,    95,    95,    95,    96,    96,    96,
-    97,    97,    97,    97,    97,    98,    98,    98,    99,    99,
-   100,   100,   101,   101,   102,   102,   103,   103,   104,   104,
-   105,   105,   106,   106,   106,   106,   106,   106,   106,   106,
-   106,   106,   106,   107,   107,   108,   109,   109,   110,   110,
-   110,   110,   110,   110,   111,   111,   112,   112,   113,   113,
-   113,   113,   113,   114,   114,   114,   114,   114,   114,   114,
-   114,   114,   114,   114,   114,   115,   115,   115,   116,   116,
-   117,   117,   118,   119,   119,   119,   119,   120,   120,   121,
-   121,   121,   122,   122,   122,   123,   123,   124,   124,   125,
-   125,   126,   126,   127,   127,   127,   127,   127,   127,   127,
-   128,   128,   128,   128,   129,   129,   130,   130,   131,   131,
-   132,   132,   132,   133,   133,   134,   134,   135,   135,   135,
-   136,   136,   136,   136,   136,   136,   136,   136,   136,   137,
-   137,   137,   138,   138,   139,   139,   139,   139,   139,   139,
-   140,   140,   140,   141,   141,   141,   141,   142,   142,   143,
-   143,   144,   144,   145,   145,   145,   146,   146,   146,   146,
-   147,   147,   147,   147,   147,   148,   148,   149,   149,   150,
-   150,   150,   150
+    92,    93,    93,    93,    93,    93,    94,    94,    94,    94,
+    94,    94,    94,    94,    95,    95,    96,    96,    96,    96,
+    96,    96,    97,    97,    97,    97,    97,    97,    98,    98,
+    99,    99,    99,    99,   100,   100,   100,   101,   101,   101,
+   102,   102,   102,   102,   102,   103,   103,   103,   104,   104,
+   105,   105,   106,   106,   107,   107,   108,   108,   109,   109,
+   110,   110,   111,   111,   111,   111,   111,   111,   111,   111,
+   111,   111,   111,   112,   112,   113,   114,   114,   115,   115,
+   115,   115,   115,   115,   116,   116,   117,   117,   118,   118,
+   118,   118,   118,   119,   119,   119,   119,   119,   119,   119,
+   119,   119,   119,   119,   119,   120,   120,   120,   121,   121,
+   122,   122,   123,   124,   124,   124,   124,   125,   125,   126,
+   126,   126,   127,   127,   127,   128,   128,   129,   129,   130,
+   130,   131,   131,   132,   132,   132,   132,   132,   132,   132,
+   133,   133,   133,   133,   134,   134,   135,   135,   136,   136,
+   137,   137,   137,   138,   138,   139,   139,   140,   140,   140,
+   141,   141,   141,   141,   141,   141,   141,   141,   141,   142,
+   142,   142,   143,   143,   144,   144,   144,   144,   144,   144,
+   145,   145,   145,   146,   146,   146,   146,   147,   147,   148,
+   148,   149,   149,   150,   150,   150,   151,   151,   151,   151,
+   152,   152,   152,   152,   152,   153,   153,   154,   154,   155,
+   155,   155,   155
 };
 
 static const short yyr2[] = {     0,
@@ -1265,1279 +1272,1279 @@ yyreduce:
   switch (yyn) {
 
 case 1:
-#line 57 "grammar.y"
+#line 59 "grammar.y"
 {
     root = new ParseTree("Program", 1, yyvsp[0].pt);
 ;
     break;}
 case 2:
-#line 62 "grammar.y"
+#line 64 "grammar.y"
 {
         yyval.pt = new ParseTree("primary_expression", 1, yyvsp[0].pt);
     ;
     break;}
 case 3:
-#line 65 "grammar.y"
+#line 67 "grammar.y"
 {
         yyval.pt = new ParseTree("primary_expression", 1, yyvsp[0].pt);
     ;
     break;}
 case 4:
-#line 68 "grammar.y"
+#line 70 "grammar.y"
 {
         yyval.pt = new ParseTree("primary_expression", 1 ,yyvsp[0].pt);
     ;
     break;}
 case 5:
-#line 71 "grammar.y"
+#line 73 "grammar.y"
 {
         yyval.pt = new ParseTree("primary_expression", 1, yyvsp[0].pt);
     ;
     break;}
 case 6:
-#line 74 "grammar.y"
+#line 76 "grammar.y"
 {
         yyval.pt = new ParseTree("primary_expression", 3,  yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 7:
-#line 80 "grammar.y"
+#line 82 "grammar.y"
 {
         yyval.pt = new ParseTree("postfix_expression", 1, yyvsp[0].pt);
     ;
     break;}
 case 8:
-#line 83 "grammar.y"
+#line 85 "grammar.y"
 {
         yyval.pt = new ParseTree("postfix_expression", 4, yyvsp[-3].pt, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 9:
-#line 86 "grammar.y"
+#line 88 "grammar.y"
 {
         yyval.pt = new ParseTree("postfix_expression", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt); 
     ;
     break;}
 case 10:
-#line 89 "grammar.y"
+#line 91 "grammar.y"
 {
         yyval.pt = new ParseTree("postfix_expression", 4, yyvsp[-3].pt, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 11:
-#line 92 "grammar.y"
+#line 94 "grammar.y"
 {
         yyval.pt = new ParseTree("postfix_expression", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt); 
     ;
     break;}
 case 12:
-#line 95 "grammar.y"
+#line 97 "grammar.y"
 {
         yyval.pt = new ParseTree("postfix_expression", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 13:
-#line 98 "grammar.y"
+#line 100 "grammar.y"
 {
         yyval.pt = new ParseTree("postfix_expression", 2, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 14:
-#line 101 "grammar.y"
+#line 103 "grammar.y"
 {
         yyval.pt = new ParseTree("postfix_expression", 2, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 15:
-#line 107 "grammar.y"
+#line 109 "grammar.y"
 {
         yyval.pt = new ParseTree("argument_experssion_list", 1, yyvsp[0].pt);
     ;
     break;}
 case 16:
-#line 110 "grammar.y"
+#line 112 "grammar.y"
 {
         yyval.pt = new ParseTree("argument_expression_list", 3, yyvsp[-2].pt, yyvsp[-1].pt ,yyvsp[0].pt);
     ;
     break;}
 case 17:
-#line 116 "grammar.y"
+#line 118 "grammar.y"
 {
         yyval.pt = new ParseTree("unary_expression", 1, yyvsp[0].pt);
     ;
     break;}
 case 18:
-#line 119 "grammar.y"
+#line 121 "grammar.y"
 {
         yyval.pt = new ParseTree("unary_expression", 2, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 19:
-#line 122 "grammar.y"
+#line 124 "grammar.y"
 {
         yyval.pt = new ParseTree("unary_expression", 2, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 20:
-#line 125 "grammar.y"
+#line 127 "grammar.y"
 {
         yyval.pt = new ParseTree("unary_expression", 2, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 21:
-#line 128 "grammar.y"
+#line 130 "grammar.y"
 {
         yyval.pt = new ParseTree("unary_expression", 2, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 22:
-#line 131 "grammar.y"
+#line 133 "grammar.y"
 {
         yyval.pt = new ParseTree("unary_expression", 4, yyvsp[-3].pt, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 23:
-#line 137 "grammar.y"
+#line 139 "grammar.y"
 {
         yyval.pt = new ParseTree("unary_operator", 1, yyvsp[0].pt);
     ;
     break;}
 case 24:
-#line 140 "grammar.y"
+#line 142 "grammar.y"
 {
         yyval.pt = new ParseTree("unary_operator", 1, yyvsp[0].pt);
     ;
     break;}
 case 25:
-#line 143 "grammar.y"
+#line 145 "grammar.y"
 {
         yyval.pt = new ParseTree("unary_operator", 1, yyvsp[0].pt);
     ;
     break;}
 case 26:
-#line 146 "grammar.y"
+#line 148 "grammar.y"
 {
         yyval.pt = new ParseTree("unary_operator", 1, yyvsp[0].pt);
     ;
     break;}
 case 27:
-#line 149 "grammar.y"
+#line 151 "grammar.y"
 {
         yyval.pt = new ParseTree("unary_operator", 1, yyvsp[0].pt);
     ;
     break;}
 case 28:
-#line 152 "grammar.y"
+#line 154 "grammar.y"
 {
         yyval.pt = new ParseTree("unary_operator", 1, yyvsp[0].pt);
     ;
     break;}
 case 29:
-#line 158 "grammar.y"
+#line 160 "grammar.y"
 {
         yyval.pt = new ParseTree("cast_expression", 1 ,yyvsp[0].pt);
     ;
     break;}
 case 30:
-#line 161 "grammar.y"
+#line 163 "grammar.y"
 {
         yyval.pt = new ParseTree("cast_expression", 4, yyvsp[-3].pt, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 31:
-#line 167 "grammar.y"
+#line 169 "grammar.y"
 {
         yyval.pt = new ParseTree("multiplicative_expression", 1 ,yyvsp[0].pt);
     ;
     break;}
 case 32:
-#line 170 "grammar.y"
+#line 172 "grammar.y"
 {
         yyval.pt = new ParseTree("multiplicative_expression", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 33:
-#line 173 "grammar.y"
+#line 175 "grammar.y"
 {
         yyval.pt = new ParseTree("multiplicative_expression", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 34:
-#line 176 "grammar.y"
+#line 178 "grammar.y"
 {
         yyval.pt = new ParseTree("multiplicative_expression", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 35:
-#line 182 "grammar.y"
+#line 184 "grammar.y"
 {
         yyval.pt = new ParseTree("additive_expression", 1, yyvsp[0].pt);
     ;
     break;}
 case 36:
-#line 185 "grammar.y"
+#line 187 "grammar.y"
 {
         yyval.pt = new ParseTree("additive_expression", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 37:
-#line 188 "grammar.y"
+#line 190 "grammar.y"
 {
         yyval.pt = new ParseTree("additive_expression", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 38:
-#line 194 "grammar.y"
+#line 196 "grammar.y"
 {
         yyval.pt = new ParseTree("shift_expression", 1, yyvsp[0].pt);
     ;
     break;}
 case 39:
-#line 197 "grammar.y"
+#line 199 "grammar.y"
 {
         yyval.pt = new ParseTree("shift_expression", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 40:
-#line 200 "grammar.y"
+#line 202 "grammar.y"
 {
         yyval.pt = new ParseTree("shift_expression", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 41:
-#line 206 "grammar.y"
+#line 208 "grammar.y"
 {
         yyval.pt = new ParseTree("relational_expression", 1, yyvsp[0].pt);
     ;
     break;}
 case 42:
-#line 209 "grammar.y"
+#line 211 "grammar.y"
 {
         yyval.pt = new ParseTree("relational_expression", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 43:
-#line 212 "grammar.y"
+#line 214 "grammar.y"
 {
         yyval.pt = new ParseTree("relational_expression", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 44:
-#line 215 "grammar.y"
+#line 217 "grammar.y"
 {
         yyval.pt = new ParseTree("relational_expression", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 45:
-#line 218 "grammar.y"
+#line 220 "grammar.y"
 {
         yyval.pt = new ParseTree("relational_expression", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 46:
-#line 224 "grammar.y"
+#line 226 "grammar.y"
 {
         yyval.pt = new ParseTree("equality_expression", 1, yyvsp[0].pt);
     ;
     break;}
 case 47:
-#line 227 "grammar.y"
+#line 229 "grammar.y"
 {
         yyval.pt = new ParseTree("equality_expression", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 48:
-#line 230 "grammar.y"
+#line 232 "grammar.y"
 {
         yyval.pt = new ParseTree("equality_expression", 1, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 49:
-#line 236 "grammar.y"
+#line 238 "grammar.y"
 {
         yyval.pt = new ParseTree("and_expression", 1, yyvsp[0].pt);
     ;
     break;}
 case 50:
-#line 239 "grammar.y"
+#line 241 "grammar.y"
 {
         yyval.pt = new ParseTree("and_expression", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 51:
-#line 245 "grammar.y"
+#line 247 "grammar.y"
 {
         yyval.pt = new ParseTree("exclusive_or_expression", 1, yyvsp[0].pt);
     ;
     break;}
 case 52:
-#line 248 "grammar.y"
+#line 250 "grammar.y"
 {
         yyval.pt = new ParseTree("exclusive_or_expression", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 53:
-#line 254 "grammar.y"
+#line 256 "grammar.y"
 {
         yyval.pt = new ParseTree("inclusive_or_expression", 1, yyvsp[0].pt);
     ;
     break;}
 case 54:
-#line 257 "grammar.y"
+#line 259 "grammar.y"
 {
         yyval.pt = new ParseTree("inclusive_or_expression", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 55:
-#line 263 "grammar.y"
+#line 265 "grammar.y"
 {
         yyval.pt = new ParseTree("logical_and_expression", 1, yyvsp[0].pt);
     ;
     break;}
 case 56:
-#line 266 "grammar.y"
+#line 268 "grammar.y"
 {
         yyval.pt = new ParseTree("logical_and_expression", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 57:
-#line 272 "grammar.y"
+#line 274 "grammar.y"
 {
         yyval.pt = new ParseTree("logical_or_expression", 1, yyvsp[0].pt);
     ;
     break;}
 case 58:
-#line 275 "grammar.y"
+#line 277 "grammar.y"
 {
         yyval.pt = new ParseTree("logical_or_expression", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 59:
-#line 281 "grammar.y"
+#line 283 "grammar.y"
 {
         yyval.pt = new ParseTree("conditional_expression", 1, yyvsp[0].pt);
     ;
     break;}
 case 60:
-#line 284 "grammar.y"
+#line 286 "grammar.y"
 {
         yyval.pt = new ParseTree("conditional_expression", 5, yyvsp[-4].pt, yyvsp[-3].pt, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 61:
-#line 290 "grammar.y"
+#line 292 "grammar.y"
 {
         yyval.pt = new ParseTree("assignment_expression", 1, yyvsp[0].pt);
     ;
     break;}
 case 62:
-#line 293 "grammar.y"
+#line 295 "grammar.y"
 {
         yyval.pt = new ParseTree("conditional_expression", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 63:
-#line 299 "grammar.y"
+#line 301 "grammar.y"
 {
         yyval.pt = new ParseTree("assignment_operator", 1, yyvsp[0].pt);
     ;
     break;}
 case 64:
-#line 302 "grammar.y"
+#line 304 "grammar.y"
 {
         yyval.pt = new ParseTree("assignment_operator", 1, yyvsp[0].pt);
     ;
     break;}
 case 65:
-#line 305 "grammar.y"
+#line 307 "grammar.y"
 {
         yyval.pt = new ParseTree("assignment_operator", 1, yyvsp[0].pt);
     ;
     break;}
 case 66:
-#line 308 "grammar.y"
+#line 310 "grammar.y"
 {
         yyval.pt = new ParseTree("assignment_operator", 1, yyvsp[0].pt);
     ;
     break;}
 case 67:
-#line 311 "grammar.y"
+#line 313 "grammar.y"
 {
         yyval.pt = new ParseTree("assignment_operator", 1, yyvsp[0].pt);
     ;
     break;}
 case 68:
-#line 314 "grammar.y"
+#line 316 "grammar.y"
 {
         yyval.pt = new ParseTree("assignment_operator", 1, yyvsp[0].pt);
     ;
     break;}
 case 69:
-#line 317 "grammar.y"
+#line 319 "grammar.y"
 {
         yyval.pt = new ParseTree("assignment_operator", 1, yyvsp[0].pt);
     ;
     break;}
 case 70:
-#line 320 "grammar.y"
+#line 322 "grammar.y"
 {
         yyval.pt = new ParseTree("assignment_operator", 1, yyvsp[0].pt);
     ;
     break;}
 case 71:
-#line 323 "grammar.y"
+#line 325 "grammar.y"
 {
         yyval.pt = new ParseTree("assignment_operator", 1, yyvsp[0].pt);
     ;
     break;}
 case 72:
-#line 326 "grammar.y"
+#line 328 "grammar.y"
 {
         yyval.pt = new ParseTree("assignment_operator", 1, yyvsp[0].pt);
     ;
     break;}
 case 73:
-#line 329 "grammar.y"
+#line 331 "grammar.y"
 {
         yyval.pt = new ParseTree("assignment_operator", 1, yyvsp[0].pt);
     ;
     break;}
 case 74:
-#line 335 "grammar.y"
+#line 337 "grammar.y"
 {
         yyval.pt = new ParseTree("expression", 1, yyvsp[0].pt);
     ;
     break;}
 case 75:
-#line 338 "grammar.y"
+#line 340 "grammar.y"
 {
         yyval.pt = new ParseTree("expression", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 76:
-#line 344 "grammar.y"
+#line 346 "grammar.y"
 {
         yyval.pt = new ParseTree("constant_expression", 1, yyvsp[0].pt);
     ;
     break;}
 case 77:
-#line 350 "grammar.y"
+#line 352 "grammar.y"
 {
         yyval.pt = new ParseTree("declaration", 2, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 78:
-#line 353 "grammar.y"
+#line 355 "grammar.y"
 {
         yyval.pt = new ParseTree("declaration", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 79:
-#line 359 "grammar.y"
+#line 361 "grammar.y"
 {
         yyval.pt = new ParseTree("declaration_specifer", 1, yyvsp[0].pt);
     ;
     break;}
 case 80:
-#line 362 "grammar.y"
+#line 364 "grammar.y"
 {
         yyval.pt = new ParseTree("declaration_specifer", 2, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 81:
-#line 365 "grammar.y"
+#line 367 "grammar.y"
 {
         yyval.pt = new ParseTree("declaration_specifer", 1, yyvsp[0].pt);
     ;
     break;}
 case 82:
-#line 368 "grammar.y"
+#line 370 "grammar.y"
 {
         yyval.pt = new ParseTree("declaration_specifer", 2, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 83:
-#line 371 "grammar.y"
+#line 373 "grammar.y"
 {
         yyval.pt = new ParseTree("declaration_specifer", 1, yyvsp[0].pt);
     ;
     break;}
 case 84:
-#line 374 "grammar.y"
+#line 376 "grammar.y"
 {
         yyval.pt = new ParseTree("declaration_specifer", 2, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 85:
-#line 380 "grammar.y"
+#line 382 "grammar.y"
 {
         yyval.pt = new ParseTree("init_declarator_list", 1, yyvsp[0].pt);
     ;
     break;}
 case 86:
-#line 383 "grammar.y"
+#line 385 "grammar.y"
 {
         yyval.pt = new ParseTree("init_declarator_list", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 87:
-#line 389 "grammar.y"
+#line 391 "grammar.y"
 {
         yyval.pt = new ParseTree("init_declarator", 1, yyvsp[0].pt);
     ;
     break;}
 case 88:
-#line 392 "grammar.y"
+#line 394 "grammar.y"
 {
         yyval.pt = new ParseTree("init_declarator", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 89:
-#line 398 "grammar.y"
+#line 400 "grammar.y"
 {
         yyval.pt = new ParseTree("storage_class_specifier", 1, yyvsp[0].pt);
     ;
     break;}
 case 90:
-#line 401 "grammar.y"
+#line 403 "grammar.y"
 {
         yyval.pt = new ParseTree("storage_class_specifier", 1, yyvsp[0].pt);
     ;
     break;}
 case 91:
-#line 404 "grammar.y"
+#line 406 "grammar.y"
 {
         yyval.pt = new ParseTree("storage_class_specifier", 1, yyvsp[0].pt);
     ;
     break;}
 case 92:
-#line 407 "grammar.y"
+#line 409 "grammar.y"
 {
         yyval.pt = new ParseTree("storage_class_specifier", 1, yyvsp[0].pt);
     ;
     break;}
 case 93:
-#line 410 "grammar.y"
+#line 412 "grammar.y"
 {
         yyval.pt = new ParseTree("storage_class_specifier", 1, yyvsp[0].pt);
     ;
     break;}
 case 94:
-#line 416 "grammar.y"
+#line 418 "grammar.y"
 {
         yyval.pt = new ParseTree("type_specifier", 1, yyvsp[0].pt);
     ;
     break;}
 case 95:
-#line 419 "grammar.y"
+#line 421 "grammar.y"
 {
         yyval.pt = new ParseTree("type_specifier", 1, yyvsp[0].pt);
     ;
     break;}
 case 96:
-#line 422 "grammar.y"
+#line 424 "grammar.y"
 {
         yyval.pt = new ParseTree("type_specifier", 1, yyvsp[0].pt);
     ;
     break;}
 case 97:
-#line 425 "grammar.y"
+#line 427 "grammar.y"
 {
         yyval.pt = new ParseTree("type_specifier", 1, yyvsp[0].pt);
     ;
     break;}
 case 98:
-#line 428 "grammar.y"
+#line 430 "grammar.y"
 {
         yyval.pt = new ParseTree("type_specifier", 1, yyvsp[0].pt);
     ;
     break;}
 case 99:
-#line 431 "grammar.y"
+#line 433 "grammar.y"
 {
         yyval.pt = new ParseTree("type_specifier", 1, yyvsp[0].pt);
     ;
     break;}
 case 100:
-#line 434 "grammar.y"
+#line 436 "grammar.y"
 {
         yyval.pt = new ParseTree("type_specifier", 1, yyvsp[0].pt);
     ;
     break;}
 case 101:
-#line 437 "grammar.y"
+#line 439 "grammar.y"
 {
         yyval.pt = new ParseTree("type_specifier", 1, yyvsp[0].pt);
     ;
     break;}
 case 102:
-#line 440 "grammar.y"
+#line 442 "grammar.y"
 {
         yyval.pt = new ParseTree("type_specifier", 1, yyvsp[0].pt);
     ;
     break;}
 case 103:
-#line 443 "grammar.y"
+#line 445 "grammar.y"
 {
         yyval.pt = new ParseTree("type_specifier", 1, yyvsp[0].pt);
     ;
     break;}
 case 104:
-#line 446 "grammar.y"
+#line 448 "grammar.y"
 {
         yyval.pt = new ParseTree("type_specifier", 1, yyvsp[0].pt);
     ;
     break;}
 case 105:
-#line 449 "grammar.y"
+#line 451 "grammar.y"
 {
         yyval.pt = new ParseTree("type_specifier", 1, yyvsp[0].pt);
     ;
     break;}
 case 106:
-#line 455 "grammar.y"
+#line 457 "grammar.y"
 {
         yyval.pt = new ParseTree("struct_or_union_specifier", 5, yyvsp[-4].pt, yyvsp[-3].pt, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 107:
-#line 458 "grammar.y"
+#line 460 "grammar.y"
 {
         yyval.pt = new ParseTree("struct_or_union_specifier", 4, yyvsp[-3].pt, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 108:
-#line 461 "grammar.y"
+#line 463 "grammar.y"
 {
         yyval.pt = new ParseTree("struct_or_union_specifier", 2, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 109:
-#line 467 "grammar.y"
+#line 469 "grammar.y"
 {
         yyval.pt = new ParseTree("struct_or_union", 1, yyvsp[0].pt);
     ;
     break;}
 case 110:
-#line 470 "grammar.y"
+#line 472 "grammar.y"
 {
         yyval.pt = new ParseTree("struct_or_union", 1, yyvsp[0].pt);
     ;
     break;}
 case 111:
-#line 476 "grammar.y"
+#line 478 "grammar.y"
 {
         yyval.pt = new ParseTree("struct_declaration_list", 1, yyvsp[0].pt);
     ;
     break;}
 case 112:
-#line 479 "grammar.y"
+#line 481 "grammar.y"
 {
         yyval.pt = new ParseTree("struct_declaration_list", 2, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 113:
-#line 485 "grammar.y"
+#line 487 "grammar.y"
 {
         yyval.pt = new ParseTree("struct_declaration", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 114:
-#line 491 "grammar.y"
+#line 493 "grammar.y"
 {
         yyval.pt = new ParseTree("specifier_qualifier_list", 2, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 115:
-#line 494 "grammar.y"
+#line 496 "grammar.y"
 {
         yyval.pt = new ParseTree("specifier_qualifier_list", 1, yyvsp[0].pt);
     ;
     break;}
 case 116:
-#line 497 "grammar.y"
+#line 499 "grammar.y"
 {
         yyval.pt = new ParseTree("specifier_qualifier_list", 2, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 117:
-#line 500 "grammar.y"
+#line 502 "grammar.y"
 {
         yyval.pt = new ParseTree("specifier_qualifier_list", 1, yyvsp[0].pt);
     ;
     break;}
 case 118:
-#line 506 "grammar.y"
+#line 508 "grammar.y"
 {
         yyval.pt = new ParseTree("struct_declarator_list", 1, yyvsp[0].pt);
     ;
     break;}
 case 119:
-#line 509 "grammar.y"
+#line 511 "grammar.y"
 {
         yyval.pt = new ParseTree("struct_declarator_list", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 120:
-#line 515 "grammar.y"
+#line 517 "grammar.y"
 {
         yyval.pt = new ParseTree("struct_declarator", 1, yyvsp[0].pt);
     ;
     break;}
 case 121:
-#line 518 "grammar.y"
+#line 520 "grammar.y"
 {
         yyval.pt = new ParseTree("struct_declarator", 2, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 122:
-#line 521 "grammar.y"
+#line 523 "grammar.y"
 {
         yyval.pt = new ParseTree("struct_declarator_list", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 123:
-#line 527 "grammar.y"
+#line 529 "grammar.y"
 {
         yyval.pt = new ParseTree("enum_specifier", 4, yyvsp[-3].pt, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 124:
-#line 530 "grammar.y"
+#line 532 "grammar.y"
 {
         yyval.pt = new ParseTree("enum_specifier", 5, yyvsp[-4].pt, yyvsp[-3].pt, yyvsp[-2].pt, yyvsp[-1].pt ,yyvsp[0].pt);
     ;
     break;}
 case 125:
-#line 533 "grammar.y"
+#line 535 "grammar.y"
 {
         yyval.pt = new ParseTree("enum_specifier", 2, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 126:
-#line 539 "grammar.y"
+#line 541 "grammar.y"
 {
         yyval.pt = new ParseTree("enum_list", 1, yyvsp[0].pt);
     ;
     break;}
 case 127:
-#line 542 "grammar.y"
+#line 544 "grammar.y"
 {
         yyval.pt = new ParseTree("enum_list", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 128:
-#line 548 "grammar.y"
+#line 550 "grammar.y"
 {
         yyval.pt = new ParseTree("enumerator", 1, yyvsp[0].pt);
     ;
     break;}
 case 129:
-#line 551 "grammar.y"
+#line 553 "grammar.y"
 {
         yyval.pt = new ParseTree("enumerator", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 130:
-#line 557 "grammar.y"
+#line 559 "grammar.y"
 {
         yyval.pt = new ParseTree("type_qualifier", 1, yyvsp[0].pt);
     ;
     break;}
 case 131:
-#line 560 "grammar.y"
+#line 562 "grammar.y"
 {
         yyval.pt = new ParseTree("type_qualifier", 1, yyvsp[0].pt);
     ;
     break;}
 case 132:
-#line 566 "grammar.y"
+#line 568 "grammar.y"
 {
         yyval.pt = new ParseTree("declarator", 1, yyvsp[-1].pt);
     ;
     break;}
 case 133:
-#line 569 "grammar.y"
+#line 571 "grammar.y"
 {
         yyval.pt = new ParseTree("declarator", 1, yyvsp[0].pt);
     ;
     break;}
 case 134:
-#line 575 "grammar.y"
+#line 577 "grammar.y"
 {
         yyval.pt = new ParseTree("direct_declarator", 1, yyvsp[0].pt);
     ;
     break;}
 case 135:
-#line 578 "grammar.y"
+#line 580 "grammar.y"
 {
         yyval.pt = new ParseTree("direct_declarator", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 136:
-#line 581 "grammar.y"
+#line 583 "grammar.y"
 {
         yyval.pt = new ParseTree("direct_declarator", 4, yyvsp[-3].pt, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 137:
-#line 584 "grammar.y"
+#line 586 "grammar.y"
 {
         yyval.pt = new ParseTree("direct_declarator", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 138:
-#line 587 "grammar.y"
+#line 589 "grammar.y"
 {
         yyval.pt = new ParseTree("direct_declarator", 4, yyvsp[-3].pt, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 139:
-#line 590 "grammar.y"
+#line 592 "grammar.y"
 {
         yyval.pt = new ParseTree("direct_declarator", 4, yyvsp[-3].pt, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 140:
-#line 593 "grammar.y"
+#line 595 "grammar.y"
 {
         yyval.pt = new ParseTree("direct_declarator", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 141:
-#line 599 "grammar.y"
+#line 601 "grammar.y"
 {
         yyval.pt = new ParseTree("pointer", 1, yyvsp[0].pt);
     ;
     break;}
 case 142:
-#line 602 "grammar.y"
+#line 604 "grammar.y"
 {
         yyval.pt = new ParseTree("pointer", 2, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 143:
-#line 605 "grammar.y"
+#line 607 "grammar.y"
 {
         yyval.pt = new ParseTree("pointer", 2, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 144:
-#line 608 "grammar.y"
+#line 610 "grammar.y"
 {
         yyval.pt = new ParseTree("pointer", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 145:
-#line 614 "grammar.y"
+#line 616 "grammar.y"
 {
         yyval.pt = new ParseTree("type_qualifier_list", 1, yyvsp[0].pt);
     ;
     break;}
 case 146:
-#line 617 "grammar.y"
+#line 619 "grammar.y"
 {
         yyval.pt = new ParseTree("type_qualifier_list", 2, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 147:
-#line 623 "grammar.y"
+#line 625 "grammar.y"
 {
         yyval.pt = new ParseTree("parameter_type_list", 1, yyvsp[0].pt);
     ;
     break;}
 case 148:
-#line 626 "grammar.y"
+#line 628 "grammar.y"
 {
         yyval.pt = new ParseTree("parameter_type_list", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 149:
-#line 632 "grammar.y"
+#line 634 "grammar.y"
 {
         yyval.pt = new ParseTree("parameter_list", 1, yyvsp[0].pt);
     ;
     break;}
 case 150:
-#line 635 "grammar.y"
+#line 637 "grammar.y"
 {
         yyval.pt = new ParseTree("parameter_list", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 151:
-#line 641 "grammar.y"
+#line 643 "grammar.y"
 {
         yyval.pt = new ParseTree("parameter_declaration", 2, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 152:
-#line 644 "grammar.y"
+#line 646 "grammar.y"
 {
         yyval.pt = new ParseTree("parameter_declaration", 2, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 153:
-#line 647 "grammar.y"
+#line 649 "grammar.y"
 {
         yyval.pt = new ParseTree("parameter_declaration", 1, yyvsp[0].pt);
     ;
     break;}
 case 154:
-#line 653 "grammar.y"
+#line 655 "grammar.y"
 {
         yyval.pt = new ParseTree("identifier_list", 1, yyvsp[0].pt);
     ;
     break;}
 case 155:
-#line 656 "grammar.y"
+#line 658 "grammar.y"
 {
         yyval.pt = new ParseTree("identifier_list", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 156:
-#line 662 "grammar.y"
+#line 664 "grammar.y"
 {
         yyval.pt = new ParseTree("type_name", 1, yyvsp[0].pt);
     ;
     break;}
 case 157:
-#line 665 "grammar.y"
+#line 667 "grammar.y"
 {
         yyval.pt = new ParseTree("type_name", 2, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 158:
-#line 671 "grammar.y"
+#line 673 "grammar.y"
 {
         yyval.pt = new ParseTree("abstract_declarator", 1, yyvsp[0].pt);
     ;
     break;}
 case 159:
-#line 674 "grammar.y"
+#line 676 "grammar.y"
 {
         yyval.pt = new ParseTree("abstract_declarator", 1, yyvsp[0].pt);
     ;
     break;}
 case 160:
-#line 677 "grammar.y"
+#line 679 "grammar.y"
 {
         yyval.pt = new ParseTree("abstract_declarator", 2, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 161:
-#line 683 "grammar.y"
+#line 685 "grammar.y"
 {
         yyval.pt = new ParseTree("direct_abstract_declarator", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 162:
-#line 686 "grammar.y"
+#line 688 "grammar.y"
 {
         yyval.pt = new ParseTree("direct_abstract_declarator", 2, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 163:
-#line 689 "grammar.y"
+#line 691 "grammar.y"
 {
         yyval.pt = new ParseTree("direct_abstract_declarator", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 164:
-#line 692 "grammar.y"
+#line 694 "grammar.y"
 {
         yyval.pt = new ParseTree("direct_abstract_declarator", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 165:
-#line 695 "grammar.y"
+#line 697 "grammar.y"
 {
         yyval.pt = new ParseTree("direct_abstract_declarator", 4, yyvsp[-3].pt, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 166:
-#line 698 "grammar.y"
+#line 700 "grammar.y"
 {
         yyval.pt = new ParseTree("direct_abstract_declarator", 2, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 167:
-#line 701 "grammar.y"
+#line 703 "grammar.y"
 {
         yyval.pt = new ParseTree("direct_abstract_declarator", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 168:
-#line 704 "grammar.y"
+#line 706 "grammar.y"
 {
         yyval.pt = new ParseTree("direct_abstract_declarator", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 169:
-#line 707 "grammar.y"
+#line 709 "grammar.y"
 {
         yyval.pt = new ParseTree("direct_abstract_declarator", 4, yyvsp[-3].pt, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 170:
-#line 713 "grammar.y"
+#line 715 "grammar.y"
 {
         yyval.pt = new ParseTree("initializer", 1, yyvsp[0].pt);
     ;
     break;}
 case 171:
-#line 716 "grammar.y"
+#line 718 "grammar.y"
 {
         yyval.pt = new ParseTree("initializer", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 172:
-#line 719 "grammar.y"
+#line 721 "grammar.y"
 {
         yyval.pt = new ParseTree("initializer", 4, yyvsp[-3].pt, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 173:
-#line 725 "grammar.y"
+#line 727 "grammar.y"
 {
         yyval.pt = new ParseTree("initializer_list", 1, yyvsp[0].pt);
     ;
     break;}
 case 174:
-#line 728 "grammar.y"
+#line 730 "grammar.y"
 {
         yyval.pt = new ParseTree("initializer_list", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 175:
-#line 734 "grammar.y"
+#line 736 "grammar.y"
 {
         yyval.pt = new ParseTree("statement", 1, yyvsp[0].pt);
     ;
     break;}
 case 176:
-#line 737 "grammar.y"
+#line 739 "grammar.y"
 {
         yyval.pt = new ParseTree("statement", 1, yyvsp[0].pt);
     ;
     break;}
 case 177:
-#line 740 "grammar.y"
+#line 742 "grammar.y"
 {
         yyval.pt = new ParseTree("statement", 1, yyvsp[0].pt);
     ;
     break;}
 case 178:
-#line 743 "grammar.y"
+#line 745 "grammar.y"
 {
         yyval.pt = new ParseTree("statement", 1, yyvsp[0].pt);
     ;
     break;}
 case 179:
-#line 746 "grammar.y"
+#line 748 "grammar.y"
 {
         yyval.pt = new ParseTree("statement", 1, yyvsp[0].pt);
     ;
     break;}
 case 180:
-#line 749 "grammar.y"
+#line 751 "grammar.y"
 {
         yyval.pt = new ParseTree("statement", 1, yyvsp[0].pt);
     ;
     break;}
 case 181:
-#line 755 "grammar.y"
+#line 757 "grammar.y"
 {
         yyval.pt = new ParseTree("labeled_statement", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 182:
-#line 758 "grammar.y"
+#line 760 "grammar.y"
 {
         yyval.pt = new ParseTree("labeled_statement", 4, yyvsp[-3].pt, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 183:
-#line 761 "grammar.y"
+#line 763 "grammar.y"
 {
         yyval.pt = new ParseTree("labeled_statement", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 184:
-#line 767 "grammar.y"
+#line 769 "grammar.y"
 {
         yyval.pt = new ParseTree("compound_statement", 2, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 185:
-#line 770 "grammar.y"
+#line 772 "grammar.y"
 {
         yyval.pt = new ParseTree("compound_statement", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 186:
-#line 773 "grammar.y"
+#line 775 "grammar.y"
 {
         yyval.pt = new ParseTree("compound_statement", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 187:
-#line 776 "grammar.y"
+#line 778 "grammar.y"
 {
         yyval.pt = new ParseTree("compound_statement", 4, yyvsp[-3].pt, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 188:
-#line 782 "grammar.y"
+#line 784 "grammar.y"
 {
         yyval.pt = new ParseTree("declaration_list", 1, yyvsp[0].pt);
     ;
     break;}
 case 189:
-#line 785 "grammar.y"
+#line 787 "grammar.y"
 {
         yyval.pt = new ParseTree("declaration_list", 1, yyvsp[-1].pt);
     ;
     break;}
 case 190:
-#line 791 "grammar.y"
+#line 793 "grammar.y"
 {
         yyval.pt = new ParseTree("statement_list", 1, yyvsp[0].pt);
     ;
     break;}
 case 191:
-#line 794 "grammar.y"
+#line 796 "grammar.y"
 {
         yyval.pt = new ParseTree("statement_list", 2, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 192:
-#line 800 "grammar.y"
+#line 802 "grammar.y"
 {
         yyval.pt = new ParseTree("expression_statement", 1, yyvsp[0].pt);
     ;
     break;}
 case 193:
-#line 803 "grammar.y"
+#line 805 "grammar.y"
 {
         yyval.pt = new ParseTree("expression_statement", 2, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 194:
-#line 809 "grammar.y"
+#line 811 "grammar.y"
 {
         yyval.pt = new ParseTree("selection_statement", 5, yyvsp[-4].pt, yyvsp[-3].pt, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 195:
-#line 812 "grammar.y"
+#line 814 "grammar.y"
 {
         yyval.pt = new ParseTree("selection_statement", 7, yyvsp[-6].pt, yyvsp[-5].pt, yyvsp[-4].pt, yyvsp[-3].pt, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 196:
-#line 815 "grammar.y"
+#line 817 "grammar.y"
 {
         yyval.pt = new ParseTree("selection_statement", 5, yyvsp[-4].pt, yyvsp[-3].pt, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 197:
-#line 821 "grammar.y"
+#line 823 "grammar.y"
 {
         yyval.pt = new ParseTree("iteration_statement", 5, yyvsp[-4].pt, yyvsp[-3].pt, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 198:
-#line 824 "grammar.y"
+#line 826 "grammar.y"
 {
         yyval.pt = new ParseTree("iteration_statement", 7, yyvsp[-6].pt, yyvsp[-5].pt, yyvsp[-4].pt, yyvsp[-3].pt, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 199:
-#line 827 "grammar.y"
+#line 829 "grammar.y"
 {
         yyval.pt = new ParseTree("iteration_statement", 6, yyvsp[-5].pt, yyvsp[-4].pt, yyvsp[-3].pt, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 200:
-#line 830 "grammar.y"
+#line 832 "grammar.y"
 {
         yyval.pt = new ParseTree("iteration_statement", 7, yyvsp[-6].pt, yyvsp[-5].pt, yyvsp[-4].pt, yyvsp[-3].pt, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 201:
-#line 836 "grammar.y"
+#line 838 "grammar.y"
 {
         yyval.pt = new ParseTree("jump_statement", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 202:
-#line 839 "grammar.y"
+#line 841 "grammar.y"
 {
         yyval.pt = new ParseTree("jump_statement", 2, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 203:
-#line 842 "grammar.y"
+#line 844 "grammar.y"
 {
         yyval.pt = new ParseTree("jump_statement", 2, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 204:
-#line 845 "grammar.y"
+#line 847 "grammar.y"
 {
         yyval.pt = new ParseTree("jump_statement", 2, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 205:
-#line 848 "grammar.y"
+#line 850 "grammar.y"
 {
         yyval.pt = new ParseTree("jump_statement", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 206:
-#line 854 "grammar.y"
+#line 856 "grammar.y"
 {
         yyval.pt = new ParseTree("translation_unit", 1, yyvsp[0].pt);
     ;
     break;}
 case 207:
-#line 857 "grammar.y"
+#line 859 "grammar.y"
 {
         yyval.pt = new ParseTree("translation_unit", 2, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 208:
-#line 863 "grammar.y"
+#line 865 "grammar.y"
 {
         yyval.pt = new ParseTree("external_declaration", 1, yyvsp[0].pt);
     ;
     break;}
 case 209:
-#line 866 "grammar.y"
+#line 868 "grammar.y"
 {
         yyval.pt = new ParseTree("external_declaration", 1, yyvsp[0].pt);
     ;
     break;}
 case 210:
-#line 872 "grammar.y"
+#line 874 "grammar.y"
 {
         yyval.pt = new ParseTree("function_definition", 4, yyvsp[-3].pt, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 211:
-#line 875 "grammar.y"
+#line 877 "grammar.y"
 {
         yyval.pt = new ParseTree("function_definition", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 212:
-#line 878 "grammar.y"
+#line 880 "grammar.y"
 {
         yyval.pt = new ParseTree("function_definition", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 213:
-#line 881 "grammar.y"
+#line 883 "grammar.y"
 {
         yyval.pt = new ParseTree("function_definition", 2, yyvsp[-1].pt, yyvsp[0].pt);
     ;
@@ -2764,7 +2771,7 @@ yyerrhandle:
     }
   return 1;
 }
-#line 886 "grammar.y"
+#line 888 "grammar.y"
 
 
 void yyerror(char const *s)
