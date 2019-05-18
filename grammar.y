@@ -896,14 +896,8 @@ int main(int argc,char* argv[]) {
 
 	yyin = fopen(argv[1],"r");
 	
-	//freopen("output/output.txt","w", stdout);
 	yyparse();
 	printf("\n");
-	eval(root,0);	//输出语法分析树
-
-	Praser praser(root);
-
-	freeGramTree(root);
 
 	fclose(yyin);
 	return 0;
