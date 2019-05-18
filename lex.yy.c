@@ -666,7 +666,7 @@ char *yytext;
 #include "grammar.tab.h"
 #include "parse_tree.h"
 
-void count(void);
+void count();
 void comment();
 int check_type();
 int column = 0;
@@ -1119,17 +1119,17 @@ YY_RULE_SETUP
 case 41:
 YY_RULE_SETUP
 #line 70 "grammar.l"
-{ count(); yylval.pt = new ParseTree("CONSTANT_INT", 0, yylineno); return(CONSTANT_INT); //16进制}
+{ count(); yylval.pt = new ParseTree("CONSTANT_INT", 0, yylineno); return(CONSTANT_INT); /*16进制*/}
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
 #line 71 "grammar.l"
-{ count(); yylval.pt = new ParseTree("CONSTANT_INT", 0, yylineno); return(CONSTANT_INT); //8进制整数}
+{ count(); yylval.pt = new ParseTree("CONSTANT_INT", 0, yylineno); return(CONSTANT_INT); /*8进制整数*/}
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
 #line 72 "grammar.l"
-{ count(); yylval.pt = new ParseTree("CONSTANT_INT", 0, yylineno); return(CONSTANT_INT); //10进制整数}
+{ count(); yylval.pt = new ParseTree("CONSTANT_INT", 0, yylineno); return(CONSTANT_INT); /*10进制整数*/}
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
@@ -2314,13 +2314,14 @@ void comment()
 {
 	char c, prev = 0;
   
-	while ((c = input()) != 0)      /* (EOF maps to 0) */
+	while (cin >> c)      /* (EOF maps to 0) */
 	{
 		if (c == '/' && prev == '*')
 			return;
 		prev = c;
 	}
-	error("unterminated comment");
+	// error("unterminated comment");
+	cout << "unterminated comment" << endl;
 }
 
 

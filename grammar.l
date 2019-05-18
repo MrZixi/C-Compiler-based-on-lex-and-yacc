@@ -67,9 +67,9 @@ IS          ((u|U)|(u|U)?(l|L|ll|LL)|(l|L|ll|LL)(u|U))
 
 {L}({L}|{D})*		{ count(); yylval.pt = new ParseTree("IDENTIFIER", 0, yylineno); return(check_type()); }
 
-0[xX]{H}+{IS}?		{ count(); yylval.pt = new ParseTree("CONSTANT_INT", 0, yylineno); return(CONSTANT_INT); //16进制}
-0[0-7]*{IS}?		{ count(); yylval.pt = new ParseTree("CONSTANT_INT", 0, yylineno); return(CONSTANT_INT); //8进制整数}
-[1-9]{D}*{IS}?		{ count(); yylval.pt = new ParseTree("CONSTANT_INT", 0, yylineno); return(CONSTANT_INT); //10进制整数}
+0[xX]{H}+{IS}?		{ count(); yylval.pt = new ParseTree("CONSTANT_INT", 0, yylineno); return(CONSTANT_INT); /*16进制*/}
+0[0-7]*{IS}?		{ count(); yylval.pt = new ParseTree("CONSTANT_INT", 0, yylineno); return(CONSTANT_INT); /*8进制整数*/}
+[1-9]{D}*{IS}?		{ count(); yylval.pt = new ParseTree("CONSTANT_INT", 0, yylineno); return(CONSTANT_INT); /*10进制整数*/}
 L?'(\\.|[^\\'\n])+'	{ count(); yylval.pt = new ParseTree("CONSTANT_INT", 0, yylineno); return(CONSTANT_INT); }
 
 {D}+{E}{FS}?				 { count(); yylval.pt = new ParseTree("CONSTANT_FLOAT", 0, yylineno); return(CONSTANT_FLOAT); }
@@ -145,13 +145,14 @@ void comment()
 {
 	char c, prev = 0;
   
-	while ((c = input()) != 0)      /* (EOF maps to 0) */
+	while (cin >> c)      /* (EOF maps to 0) */
 	{
 		if (c == '/' && prev == '*')
 			return;
 		prev = c;
 	}
-	error("unterminated comment");
+	// error("unterminated comment");
+	cout << "unterminated comment" << endl;
 }
 
 
