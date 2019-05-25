@@ -21,4 +21,5 @@ public:
     ParseTree(string name, int num, ...);
     ParseTree();
     ~ParseTree();
+    void levalTrase();
 };

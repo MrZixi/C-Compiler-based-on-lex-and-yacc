@@ -877,13 +877,7 @@ function_definition:
 	| declaration_specifiers declarator compound_statement {
         $$ = new ParseTree("function_definition", 3, $1, $2, $3);
     }
-	| declarator declaration_list compound_statement {
-        $$ = new ParseTree("function_definition", 3, $1, $2, $3);
-    }
-	| declarator compound_statement {
-        $$ = new ParseTree("function_definition", 2, $1, $2);
-    }
-	;
+    ;
 
 %%
 
@@ -900,6 +894,8 @@ int main(int argc,char* argv[]) {
 	
 	yyparse();
 	printf("\n");
+
+    root->levalTrase();
 
 	fclose(yyin);
 	return 0;

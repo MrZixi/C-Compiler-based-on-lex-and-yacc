@@ -23,7 +23,7 @@ IS          ((u|U)|(u|U)?(l|L|ll|LL)|(l|L|ll|LL)(u|U))
 
 %%
 
-"/*"			{ comment(); }
+"/*"([^"*"]|("*")*[^"*/"])*("*")*"*/"			{ comment(); }
 "//"[^\n]*      { /* consume //-comment */ }
 
 
@@ -143,16 +143,16 @@ int yywrap()
 
 void comment()
 {
-	char c, prev = 0;
+	// char c, prev = 0;
   
-	while (cin >> c)      /* (EOF maps to 0) */
-	{
-		if (c == '/' && prev == '*')
-			return;
-		prev = c;
-	}
-	// error("unterminated comment");
-	cout << "unterminated comment" << endl;
+	// while (cin >> c)      /* (EOF maps to 0) */
+	// {
+	// 	if (c == '/' && prev == '*')
+	// 		return;
+	// 	prev = c;
+	// }
+	// // error("unterminated comment");
+	 cout << "/*comment*/";
 }
 
 
