@@ -20,6 +20,7 @@
         "streambuf": "cpp",
         "type_traits": "cpp",
         "typeinfo": "cpp",
-        "string": "cpp"
+        "string": "cpp",
+        "vector": "cpp"
     } // 效果效果比cpptools要好
 }

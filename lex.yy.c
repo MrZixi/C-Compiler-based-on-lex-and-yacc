@@ -1139,7 +1139,7 @@ YY_RULE_SETUP
 case 44:
 YY_RULE_SETUP
 #line 73 "grammar.l"
-{ count(); yylval.pt = new ParseTree("CONSTANT_INT", 0, yylineno); return(CONSTANT_INT); }
+{ count(); yylval.pt = new ParseTree("CONSTANT_CHAR", 0, yylineno); return(CONSTANT_CHAR); }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP

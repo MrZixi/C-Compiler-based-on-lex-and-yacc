@@ -70,7 +70,7 @@ IS          ((u|U)|(u|U)?(l|L|ll|LL)|(l|L|ll|LL)(u|U))
 0[xX]{H}+{IS}?		{ count(); yylval.pt = new ParseTree("CONSTANT_INT", 0, yylineno); return(CONSTANT_INT); /*16进制*/}
 0[0-7]*{IS}?		{ count(); yylval.pt = new ParseTree("CONSTANT_INT", 0, yylineno); return(CONSTANT_INT); /*8进制整数*/}
 [1-9]{D}*{IS}?		{ count(); yylval.pt = new ParseTree("CONSTANT_INT", 0, yylineno); return(CONSTANT_INT); /*10进制整数*/}
-L?'(\\.|[^\\'\n])+'	{ count(); yylval.pt = new ParseTree("CONSTANT_INT", 0, yylineno); return(CONSTANT_INT); }
+L?'(\\.|[^\\'\n])+'	{ count(); yylval.pt = new ParseTree("CONSTANT_CHAR", 0, yylineno); return(CONSTANT_CHAR); }
 
 {D}+{E}{FS}?				 { count(); yylval.pt = new ParseTree("CONSTANT_FLOAT", 0, yylineno); return(CONSTANT_FLOAT); }
 {D}*"."{D}+{E}?{FS}?		 { count(); yylval.pt = new ParseTree("CONSTANT_FLOAT", 0, yylineno); return(CONSTANT_FLOAT); }
