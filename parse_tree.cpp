@@ -14,10 +14,10 @@ ParseTree::ParseTree(string name, int num, ...)
         temp = va_arg(valist, ParseTree *);
         this->child = temp;
         this->line = temp->line;
-        //如果只有一个子节点
+        //濡傛灉鍙湁涓�涓瓙鑺傜偣
         if (num == 1)
         {
-            //如果是终结符
+            //濡傛灉鏄粓缁撶
             if (temp->content.size() > 0)
             {
                 this->content = temp->content;
@@ -27,7 +27,7 @@ ParseTree::ParseTree(string name, int num, ...)
                 this->content = "";
             }
         }
-        //如果有不止一个子节点
+        //濡傛灉鏈変笉姝竴涓瓙鑺傜偣
         else
         {
             for (int i = 0; i < num - 1; i++)
@@ -45,17 +45,17 @@ ParseTree::ParseTree(string name, int num, ...)
         if (this->name == "CONSTANT_INT")
         {
             int value;
-            //8进制
+            //8杩涘埗
             if (strlen(yytext) > 1 && yytext[0] == '0' && yytext[1] != 'x' && yytext[1] != 'X')
             {
                 sscanf(yytext, "%o", &value);
             }
-            //16进制
+            //16杩涘埗
             else if (strlen(yytext) > 1 && yytext[0] == '0' && (yytext[1] == 'x' || yytext[1] == 'X'))
             {
                 sscanf(yytext, "%x", &value);
             }
-            //10进制
+            //10杩涘埗
             else
             {
                 value = atoi(yytext);
@@ -106,28 +106,48 @@ void ParseTree::levalTrase()
     // }
     // cout << endl;
     // this->next_sibling->levalTrase();
-    int front, rear;
-    ParseTree *que[40960];
-    front = rear = 0;
-    ParseTree *p, *q;
-    if (this != NULL)
+    // int front, rear;
+    // ParseTree *que[40960];
+    // front = rear = 0;
+    // ParseTree *p, *q;
+    // if (this != NULL)
+    // {
+    //     rear++;
+    //     que[rear] = this;
+    //     while (front != rear)
+    //     {
+    //         front++;
+    //         q = que[front];
+    //         cout << q->name;
+    //         p = q->child;
+    //         while (p != NULL)
+    //         {
+    //             cout << "-" <<p->name;
+    //             rear++;
+    //             que[rear] = p;
+    //             p = p->next_sibling;
+    //         }
+    //         cout << endl;
+    //     }
+    // }
+    eval(this, 0);
+}
+
+void eval(ParseTree *p, int level)
+{
+    if (p != NULL)
     {
-        rear++;
-        que[rear] = this;
-        while (front != rear)
+        for (int i = 0; i < level; i++)
         {
-            front++;
-            q = que[front];
-            cout << q->name;
-            p = q->child;
-            while (p != NULL)
-            {
-                cout << "-" <<p->name;
-                rear++;
-                que[rear] = p;
-                p = p->next_sibling;
-            }
-            cout << endl;
+            cout << "+ ";
         }
+        cout << p->name;
+        if (p->name == "IDENTIFIER"||p->name == "CONSTANT_INT"||p->name == "CONSTANT_FLOAT"||p->name == "CONSTANT_CHAR"||p->name == "STRING_LITERAL")
+        {
+            cout << ":" << p->content;
+        }
+        cout << endl;
+        eval(p->child, level + 1);
+        eval(p->next_sibling, level);
     }
 }

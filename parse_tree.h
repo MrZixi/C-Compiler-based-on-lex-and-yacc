@@ -10,6 +10,9 @@ using namespace std;
 extern char *yytext;
 extern int yylineo;
 
+
+
+
 class ParseTree
 {
 public:
@@ -23,3 +26,5 @@ public:
     ~ParseTree();
     void levalTrase();
 };
+
+void eval(ParseTree* p,int level);

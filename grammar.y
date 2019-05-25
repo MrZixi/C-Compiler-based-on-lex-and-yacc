@@ -22,7 +22,7 @@ void yyerror(const char*);
 	class ParseTree *pt;
 }
 
-%token <pt> IDENTIFIER CONSTANT STRING_LITERAL SIZEOF CONSTANT_INT CONSTANT_FLOAT
+%token <pt> IDENTIFIER CONSTANT STRING_LITERAL SIZEOF CONSTANT_INT CONSTANT_FLOAT CONSTANT_CHAR
 %token <pt> PTR_OP INC_OP DEC_OP LEFT_OP RIGHT_OP LE_OP GE_OP EQ_OP NE_OP
 %token <pt> AND_OP OR_OP MUL_ASSIGN DIV_ASSIGN MOD_ASSIGN ADD_ASSIGN
 %token <pt> SUB_ASSIGN LEFT_ASSIGN RIGHT_ASSIGN AND_ASSIGN
@@ -71,6 +71,9 @@ primary_expression:
         $$ = new ParseTree("primary_expression", 1 ,$1);
     }
 	| STRING_LITERAL {
+        $$ = new ParseTree("primary_expression", 1, $1);
+    }
+    | CONSTANT_CHAR {
         $$ = new ParseTree("primary_expression", 1, $1);
     }
 	| '(' expression ')' {
@@ -566,7 +569,7 @@ type_qualifier:
 
 declarator: 
     pointer direct_declarator {
-        $$ = new ParseTree("declarator", 1, $1);
+        $$ = new ParseTree("declarator", 2, $1, $2);
     }
 	| direct_declarator {
         $$ = new ParseTree("declarator", 1, $1);

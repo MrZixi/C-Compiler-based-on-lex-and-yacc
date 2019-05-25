@@ -80,7 +80,7 @@ L?'(\\.|[^\\'\n])+'	{ count(); yylval.pt = new ParseTree("CONSTANT_CHAR", 0, yyl
 0[xX]{H}+"."{H}*{P}{FS}?     { count(); yylval.pt = new ParseTree("CONSTANT_FLOAT", 0, yylineno); return(CONSTANT_FLOAT); }
 
 
-L?\"(\\.|[^\\"\n])*\"	{ count(); return(STRING_LITERAL); }
+L?\"(\\.|[^\\"\n])*\"	{ count(); yylval.pt = new ParseTree("STRING_LITERAL", 0, yylineno); return(STRING_LITERAL); }
 
 "..."			{ count(); yylval.pt = new ParseTree("ELLIPSIS", 0, yylineno); return(ELLIPSIS); }
 ">>="			{ count(); yylval.pt = new ParseTree("RIGHT_ASSIGN", 0, yylineno); return(RIGHT_ASSIGN); }
