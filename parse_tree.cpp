@@ -14,10 +14,10 @@ ParseTree::ParseTree(string name, int num, ...)
         temp = va_arg(valist, ParseTree *);
         this->child = temp;
         this->line = temp->line;
-        //如果只有一个子节点
+        //濡傛灉鍙湁涓�涓瓙鑺傜偣
         if (num == 1)
         {
-            //如果是终结符
+            //濡傛灉鏄粓缁撶
             if (temp->content.size() > 0)
             {
                 this->content = temp->content;
@@ -27,7 +27,7 @@ ParseTree::ParseTree(string name, int num, ...)
                 this->content = "";
             }
         }
-        //如果有不止一个子节点
+        //濡傛灉鏈変笉姝竴涓瓙鑺傜偣
         else
         {
             for (int i = 0; i < num - 1; i++)
@@ -45,17 +45,17 @@ ParseTree::ParseTree(string name, int num, ...)
         if (this->name == "CONSTANT_INT")
         {
             int value;
-            //8进制
+            //8杩涘埗
             if (strlen(yytext) > 1 && yytext[0] == '0' && yytext[1] != 'x' && yytext[1] != 'X')
             {
                 sscanf(yytext, "%o", &value);
             }
-            //16进制
+            //16杩涘埗
             else if (strlen(yytext) > 1 && yytext[0] == '0' && (yytext[1] == 'x' || yytext[1] == 'X'))
             {
                 sscanf(yytext, "%x", &value);
             }
-            //10进制
+            //10杩涘埗
             else
             {
                 value = atoi(yytext);
