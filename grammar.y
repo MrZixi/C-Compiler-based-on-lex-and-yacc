@@ -45,13 +45,13 @@ void yyerror(const char*);
 
 %type <pt> declaration init_declarator_list init_declarator type_specifier type_name type_qualifier specifier_qualifier_list struct_declarator_list
 
-%type <pt> declarator pointer enum_specifier cast_expression conditional_expression declaration_specifiers storage_class_specifier
+%type <pt> declarator pointer cast_expression conditional_expression declaration_specifiers storage_class_specifier
     
-%type <pt> parameter_list parameter_declaration identifier_list direct_declarator direct_abstract_declarator struct_declaration struct_declarator
+%type <pt> parameter_list parameter_declaration identifier_list direct_abstract_declarator struct_declaration struct_declarator
 %type <pt> abstract_declarator initializer initializer_list struct_or_union_specifier struct_or_union struct_declaration_list
 %type <pt> statement labeled_statement compound_statement expression_statement enum_specifier enumerator_list direct_declarator enumerator
 %type <pt> selection_statement iteration_statement jump_statement translation_unit external_declaration function_definition 
-%type <pt> declaration_list function_definition parameter_type_list type_qualifier_list statement_list
+%type <pt> declaration_list parameter_type_list type_qualifier_list statement_list
 
 
 %%
