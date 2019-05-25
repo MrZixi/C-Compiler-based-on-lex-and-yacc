@@ -1,4 +1,5 @@
 #include "code_printer.h"
+#include <fstream>
 CodePrinter::CodePrinter()
 {
     temp_var_count = 0;
@@ -25,28 +26,75 @@ void CodePrinter::printCode()
 
 string CodePrinter::createCodeforVar(string tempname, string op, varNode node1, varNode node2)
 {
-
+    string result;
+    result = tempname + " = " + getNodeName(node1) + " " + op + " " + getNodeName(node2);
+    return result;
 }
 string CodePrinter::createCodeforAssign(varNode node1, varNode node2)
 { 
-
+    string result;
+    result = getNodeName(node1) + " = " + getNodeName(node2);
+    return result;
 }
 string CodePrinter::createCodeforParameter(varNode node)
 {
-
+    string result = "LOAD_PARAM ";
+    result += getNodeName(node);
+    return result;
 }
 string CodePrinter::createCodeforReturn(varNode node)
 {
-
+    string result;
+    result += "RETURN " + getNodeType(node) + " " + getNodeName(node);
+    return result;
 }
 string CodePrinter::createCodeforArgument(varNode node)
 {
-
+    string result = "PASS ";
+    result += getNodeName(node);
+    return result;
 }
 
 string CodePrinter::getNodeName(varNode node)
 {
+    if (node.useAddress) {
+		return "*" + node.name;
+	}
+	else {
+		if (node.count < 0) {
+			return node.name;
+		}
+		else return "var" + to_string(node.count);
+	}
+}
 
+string CodePrinter::getNodeType(varNode node)
+{
+   if(node.type.compare("int") == 0)
+    {
+        return "I32";
+    }
+    else if(node.type.compare("long") == 0)
+    {
+        return "I32";
+    }
+    else if(node.type.compare("long long") == 0)
+    {
+        return "I64";
+    }
+    else if(node.type.compare("float") == 0)
+    {
+        return "FLOAT";
+    }
+    else if(node.type.compare("double") == 0)
+    {
+        return "DOUBLE";
+    }
+    else if(node.type.compare("void") == 0)
+    {
+        return "";
+    }
+    return "";
 }
 string CodePrinter::getarrayNodeName(arrayNode node)
 {
