@@ -1,7 +1,6 @@
 #ifndef _CODE_PRINTER_H_
 #define _CODE_PRINTER_H_
 #include <iostream>
-#include <fstream>
 #include <vector>
 #include <string>
 #include "parse_tree.h"
@@ -27,6 +26,7 @@ class CodePrinter
 	    string createCodeforArgument(varNode);
 
 	    string getNodeName(varNode);
+        string getNodeType(varNode);
 	    string getarrayNodeName(arrayNode);
 	    string getLabelName();
 };
