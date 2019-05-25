@@ -106,28 +106,48 @@ void ParseTree::levalTrase()
     // }
     // cout << endl;
     // this->next_sibling->levalTrase();
-    int front, rear;
-    ParseTree *que[40960];
-    front = rear = 0;
-    ParseTree *p, *q;
-    if (this != NULL)
+    // int front, rear;
+    // ParseTree *que[40960];
+    // front = rear = 0;
+    // ParseTree *p, *q;
+    // if (this != NULL)
+    // {
+    //     rear++;
+    //     que[rear] = this;
+    //     while (front != rear)
+    //     {
+    //         front++;
+    //         q = que[front];
+    //         cout << q->name;
+    //         p = q->child;
+    //         while (p != NULL)
+    //         {
+    //             cout << "-" <<p->name;
+    //             rear++;
+    //             que[rear] = p;
+    //             p = p->next_sibling;
+    //         }
+    //         cout << endl;
+    //     }
+    // }
+    eval(this, 0);
+}
+
+void eval(ParseTree *p, int level)
+{
+    if (p != NULL)
     {
-        rear++;
-        que[rear] = this;
-        while (front != rear)
+        for (int i = 0; i < level; i++)
         {
-            front++;
-            q = que[front];
-            cout << q->name;
-            p = q->child;
-            while (p != NULL)
-            {
-                cout << "-" <<p->name;
-                rear++;
-                que[rear] = p;
-                p = p->next_sibling;
-            }
-            cout << endl;
+            cout << "+ ";
         }
+        cout << p->name;
+        if (p->name == "IDENTIFIER"||p->name == "CONSTANT_INT"||p->name == "CONSTANT_FLOAT"||p->name == "CONSTANT_CHAR"||p->name == "STRING_LITERAL")
+        {
+            cout << ":" << p->content;
+        }
+        cout << endl;
+        eval(p->child, level + 1);
+        eval(p->next_sibling, level);
     }
 }
