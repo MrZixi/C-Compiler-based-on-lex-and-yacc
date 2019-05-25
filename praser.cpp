@@ -12,7 +12,7 @@ void Praser::init()
 }
 varNode Praser::praser_assignment_expression(ParseTree* assign_exp)
 {
-
+    
 }
 varNode Praser::praser_logical_or_expression(ParseTree* logical_or_exp)
 {
@@ -78,6 +78,15 @@ void Praser::praser_argument_expression_list(ParseTree* argument_exp, string fun
 			error(argument_list->line, "Wrong type arguments to function " + func_name);
 		}
     }
+    varNode arg = praser_assignment_expression(argument_list->next_sibling->next_sibling);
+    codePrinter.addCode(codePrinter.createCodeforArgument(arg));
+    count++;
+    if (func.param_list[func.param_list.size() - count].type != arg.type) {
+		error(argument_list->line, "Wrong type arguments to function " + func_name);
+	}
+    if (count != func.param_list.size()) {
+		error(argument_list->line, "The number of arguments doesn't equal to the function parameters number in " + func_name + ".");
+	}
 }
 
 bool Praser::lookup_var_in_current_block(string name)

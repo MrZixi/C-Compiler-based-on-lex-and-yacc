@@ -19,7 +19,19 @@ class Praser{
         CodePrinter codePrinter;
         
         void init();
-                                                         //arithmatic expressions       
+                                                                                //jzy
+        void praser_parameter_list(struct gramTree*,string,bool);			//获取函数形参列表
+	    void praser_parameter_declaration(struct gramTree*, string,bool);	//获取函数单个形参
+        void praser_expression_statement(ParseTree*);
+	    varNode praser_expression(ParseTree*);      
+                                                              //lcx
+        void praser_argument_expression_list(ParseTree*, string);
+                                            //jzy
+        void praser_jump_statement(ParseTree*);
+	    void praser_compound_statement(ParseTree*);
+	    void praser_selection_statement(ParseTree*);
+	    void praser_iteration_statement(ParseTree*);
+                                                         //arithmatic expressions:lcx       
         varNode praser_assignment_expression(ParseTree*);			
 	    varNode praser_logical_or_expression(ParseTree*);			
 	    varNode praser_logical_and_expression(ParseTree*);	
@@ -34,7 +46,7 @@ class Praser{
 	    varNode praser_unary_expression(ParseTree*);
 	    varNode praser_postfix_expression(ParseTree*);
 
-        void praser_argument_expression_list(ParseTree*, string);
+        
         bool lookup_var_in_current_block(string);
 
         void error(int, string);
