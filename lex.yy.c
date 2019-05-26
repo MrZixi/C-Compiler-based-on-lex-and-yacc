@@ -1174,7 +1174,7 @@ YY_RULE_SETUP
 case 51:
 YY_RULE_SETUP
 #line 83 "grammar.l"
-{ count(); return(STRING_LITERAL); }
+{ count(); yylval.pt = new ParseTree("STRING_LITERAL", 0, yylineno); return(STRING_LITERAL); }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
