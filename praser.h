@@ -45,6 +45,7 @@ class Praser{
 	    varNode praser_shift_expression(ParseTree*);
 	    varNode praser_additive_expression(ParseTree*);
 	    varNode praser_multiplicative_expression(ParseTree*);
+        varNode praser_cast_expression(ParseTree*);
 	    varNode praser_unary_expression(ParseTree*);
 	    varNode praser_postfix_expression(ParseTree*);
 
