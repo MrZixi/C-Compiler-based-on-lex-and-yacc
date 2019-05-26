@@ -13,6 +13,8 @@ struct varNode
     string boolValue;  
     string name, type;
     int count = -1;
+    //const then true
+    bool isConst = false;
 };
 
 struct arrayNode

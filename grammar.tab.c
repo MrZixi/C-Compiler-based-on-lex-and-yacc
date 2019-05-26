@@ -2412,7 +2412,7 @@ case 189:
 case 190:
 #line 790 "grammar.y"
 {
-        yyval.pt = new ParseTree("declaration_list", 1, yyvsp[-1].pt);
+        yyval.pt = new ParseTree("declaration_list", 2, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 191:
