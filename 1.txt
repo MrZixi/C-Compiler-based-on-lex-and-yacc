@@ -1,1 +1,8 @@
-char p = 'a';
+void p(int a, int b)
+{
+}
+int main()
+{ 
+  int a = 0, b = 1;
+  p(a, b);
+}
