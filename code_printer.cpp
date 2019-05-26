@@ -94,7 +94,11 @@ string CodePrinter::getNodeType(varNode node)
     {
         return "";
     }
-    return "";
+    else
+    {
+        return "CODE-DEF:" + node.type;
+    }
+    
 }
 string CodePrinter::getarrayNodeName(arrayNode node)
 {
