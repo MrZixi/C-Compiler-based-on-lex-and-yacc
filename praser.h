@@ -21,8 +21,8 @@ class Praser{
         
         void init();
                                                                                 //jzy
-        void praser_parameter_list(struct gramTree*,string,bool);			//获取函数形参列表
-	    void praser_parameter_declaration(struct gramTree*, string,bool);	//获取函数单个形参
+        void praser_parameter_list(ParseTree*,string,bool);			//获取函数形参列表
+	    void praser_parameter_declaration(ParseTree*, string,bool);	//获取函数单个形参
         void praser_expression_statement(ParseTree*);
 	    varNode praser_expression(ParseTree*);      
                                                               //lcx

@@ -663,9 +663,9 @@ goto find_rule; \
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 ".\\grammar.l"
+#line 1 "grammar.l"
 #define INITIAL 0
-#line 2 ".\\grammar.l"
+#line 2 "grammar.l"
 #include <iostream>
 #include <stdio.h>
 #include "grammar.tab.h"
@@ -827,7 +827,7 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
 
-#line 24 ".\\grammar.l"
+#line 24 "grammar.l"
 
 
 #line 834 "lex.yy.c"
@@ -923,502 +923,502 @@ do_action:	/* This label is used only to access EOF actions. */
 	{ /* beginning of action switch */
 case 1:
 YY_RULE_SETUP
-#line 26 ".\\grammar.l"
+#line 26 "grammar.l"
 { comment(); }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 27 ".\\grammar.l"
+#line 27 "grammar.l"
 { /* consume //-comment */ }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 30 ".\\grammar.l"
+#line 30 "grammar.l"
 { count(); yylval.pt = new ParseTree("auto", 0, yylineno); return(AUTO); }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 31 ".\\grammar.l"
+#line 31 "grammar.l"
 { count(); yylval.pt = new ParseTree("bool", 0, yylineno); return(BOOL); }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 32 ".\\grammar.l"
+#line 32 "grammar.l"
 { count(); yylval.pt = new ParseTree("break", 0, yylineno); return(BREAK); }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 33 ".\\grammar.l"
+#line 33 "grammar.l"
 { count(); yylval.pt = new ParseTree("case", 0, yylineno); return(CASE); }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 34 ".\\grammar.l"
+#line 34 "grammar.l"
 { count(); yylval.pt = new ParseTree("char", 0, yylineno); return(CHAR); }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 35 ".\\grammar.l"
+#line 35 "grammar.l"
 { count(); yylval.pt = new ParseTree("complex", 0, yylineno); return(COMPLEX); }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 36 ".\\grammar.l"
+#line 36 "grammar.l"
 { count(); yylval.pt = new ParseTree("const", 0, yylineno); return(CONST); }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 37 ".\\grammar.l"
+#line 37 "grammar.l"
 { count(); yylval.pt = new ParseTree("continue", 0, yylineno); return(CONTINUE); }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 38 ".\\grammar.l"
+#line 38 "grammar.l"
 { count(); yylval.pt = new ParseTree("default", 0, yylineno); return(DEFAULT); }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 39 ".\\grammar.l"
+#line 39 "grammar.l"
 { count(); yylval.pt = new ParseTree("do", 0, yylineno); return(DO); }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 40 ".\\grammar.l"
+#line 40 "grammar.l"
 { count(); yylval.pt = new ParseTree("double", 0, yylineno); return(DOUBLE); }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 41 ".\\grammar.l"
+#line 41 "grammar.l"
 { count(); yylval.pt = new ParseTree("else", 0, yylineno); return(ELSE); }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 42 ".\\grammar.l"
+#line 42 "grammar.l"
 { count(); yylval.pt = new ParseTree("enum", 0, yylineno); return(ENUM); }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 43 ".\\grammar.l"
+#line 43 "grammar.l"
 { count(); yylval.pt = new ParseTree("extern", 0, yylineno); return(EXTERN); }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 44 ".\\grammar.l"
+#line 44 "grammar.l"
 { count(); yylval.pt = new ParseTree("float", 0, yylineno); return(FLOAT); }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 45 ".\\grammar.l"
+#line 45 "grammar.l"
 { count(); yylval.pt = new ParseTree("for", 0, yylineno); return(FOR); }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 46 ".\\grammar.l"
+#line 46 "grammar.l"
 { count(); yylval.pt = new ParseTree("goto", 0, yylineno); return(GOTO); }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 47 ".\\grammar.l"
+#line 47 "grammar.l"
 { count(); yylval.pt = new ParseTree("if", 0, yylineno); return(IF); }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 48 ".\\grammar.l"
+#line 48 "grammar.l"
 { count(); yylval.pt = new ParseTree("imaginary", 0, yylineno); return(IMAGINARY); }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 49 ".\\grammar.l"
+#line 49 "grammar.l"
 { count(); yylval.pt = new ParseTree("inline", 0, yylineno); return(INLINE); }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 50 ".\\grammar.l"
+#line 50 "grammar.l"
 { count(); yylval.pt = new ParseTree("int", 0, yylineno); return(INT); }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 51 ".\\grammar.l"
+#line 51 "grammar.l"
 { count(); yylval.pt = new ParseTree("long", 0, yylineno); return(LONG); }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 52 ".\\grammar.l"
+#line 52 "grammar.l"
 { count(); yylval.pt = new ParseTree("register", 0, yylineno); return(REGISTER); }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 53 ".\\grammar.l"
+#line 53 "grammar.l"
 { count(); yylval.pt = new ParseTree("restrict", 0, yylineno); return(RESTRICT); }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 54 ".\\grammar.l"
+#line 54 "grammar.l"
 { count(); yylval.pt = new ParseTree("return", 0, yylineno); return(RETURN); }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 55 ".\\grammar.l"
+#line 55 "grammar.l"
 { count(); yylval.pt = new ParseTree("short", 0, yylineno); return(SHORT); }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 56 ".\\grammar.l"
+#line 56 "grammar.l"
 { count(); yylval.pt = new ParseTree("signed", 0, yylineno); return(SIGNED); }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 57 ".\\grammar.l"
+#line 57 "grammar.l"
 { count(); yylval.pt = new ParseTree("sizeof", 0, yylineno); return(SIZEOF); }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 58 ".\\grammar.l"
+#line 58 "grammar.l"
 { count(); yylval.pt = new ParseTree("static", 0, yylineno); return(STATIC); }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 59 ".\\grammar.l"
+#line 59 "grammar.l"
 { count(); yylval.pt = new ParseTree("struct", 0, yylineno); return(STRUCT); }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 60 ".\\grammar.l"
+#line 60 "grammar.l"
 { count(); yylval.pt = new ParseTree("switch", 0, yylineno); return(SWITCH); }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 61 ".\\grammar.l"
+#line 61 "grammar.l"
 { count(); yylval.pt = new ParseTree("typedef", 0, yylineno); return(TYPEDEF); }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 62 ".\\grammar.l"
+#line 62 "grammar.l"
 { count(); yylval.pt = new ParseTree("union", 0, yylineno); return(UNION); }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 63 ".\\grammar.l"
+#line 63 "grammar.l"
 { count(); yylval.pt = new ParseTree("unsigned", 0, yylineno); return(UNSIGNED); }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 64 ".\\grammar.l"
+#line 64 "grammar.l"
 { count(); yylval.pt = new ParseTree("void", 0, yylineno); return(VOID); }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 65 ".\\grammar.l"
+#line 65 "grammar.l"
 { count(); yylval.pt = new ParseTree("volatile", 0, yylineno); return(VOLATILE); }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 66 ".\\grammar.l"
+#line 66 "grammar.l"
 { count(); yylval.pt = new ParseTree("while", 0, yylineno); return(WHILE); }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 68 ".\\grammar.l"
+#line 68 "grammar.l"
 { count(); yylval.pt = new ParseTree("IDENTIFIER", 0, yylineno); return(check_type()); }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 70 ".\\grammar.l"
+#line 70 "grammar.l"
 { count(); yylval.pt = new ParseTree("CONSTANT_INT", 0, yylineno); return(CONSTANT_INT); /*16进制*/}
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 71 ".\\grammar.l"
+#line 71 "grammar.l"
 { count(); yylval.pt = new ParseTree("CONSTANT_INT", 0, yylineno); return(CONSTANT_INT); /*8进制整数*/}
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 72 ".\\grammar.l"
+#line 72 "grammar.l"
 { count(); yylval.pt = new ParseTree("CONSTANT_INT", 0, yylineno); return(CONSTANT_INT); /*10进制整数*/}
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 73 ".\\grammar.l"
+#line 73 "grammar.l"
 { count(); yylval.pt = new ParseTree("CONSTANT_CHAR", 0, yylineno); return(CONSTANT_CHAR); }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 75 ".\\grammar.l"
+#line 75 "grammar.l"
 { count(); yylval.pt = new ParseTree("CONSTANT_FLOAT", 0, yylineno); return(CONSTANT_FLOAT); }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 76 ".\\grammar.l"
+#line 76 "grammar.l"
 { count(); yylval.pt = new ParseTree("CONSTANT_FLOAT", 0, yylineno); return(CONSTANT_FLOAT); }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 77 ".\\grammar.l"
+#line 77 "grammar.l"
 { count(); yylval.pt = new ParseTree("CONSTANT_FLOAT", 0, yylineno); return(CONSTANT_FLOAT); }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 78 ".\\grammar.l"
+#line 78 "grammar.l"
 { count(); yylval.pt = new ParseTree("CONSTANT_FLOAT", 0, yylineno); return(CONSTANT_FLOAT); }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 79 ".\\grammar.l"
+#line 79 "grammar.l"
 { count(); yylval.pt = new ParseTree("CONSTANT_FLOAT", 0, yylineno); return(CONSTANT_FLOAT); }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 80 ".\\grammar.l"
+#line 80 "grammar.l"
 { count(); yylval.pt = new ParseTree("CONSTANT_FLOAT", 0, yylineno); return(CONSTANT_FLOAT); }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 83 ".\\grammar.l"
+#line 83 "grammar.l"
 { count(); yylval.pt = new ParseTree("STRING_LITERAL", 0, yylineno); return(STRING_LITERAL); }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 85 ".\\grammar.l"
+#line 85 "grammar.l"
 { count(); yylval.pt = new ParseTree("ELLIPSIS", 0, yylineno); return(ELLIPSIS); }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 86 ".\\grammar.l"
+#line 86 "grammar.l"
 { count(); yylval.pt = new ParseTree("RIGHT_ASSIGN", 0, yylineno); return(RIGHT_ASSIGN); }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 87 ".\\grammar.l"
+#line 87 "grammar.l"
 { count(); yylval.pt = new ParseTree("LEFT_ASSIGN", 0, yylineno); return(LEFT_ASSIGN); }
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 88 ".\\grammar.l"
+#line 88 "grammar.l"
 { count(); yylval.pt = new ParseTree("ADD_ASSIGN", 0, yylineno); return(ADD_ASSIGN); }
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 89 ".\\grammar.l"
+#line 89 "grammar.l"
 { count(); yylval.pt = new ParseTree("SUB_ASSIGN", 0, yylineno); return(SUB_ASSIGN); }
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 90 ".\\grammar.l"
+#line 90 "grammar.l"
 { count(); yylval.pt = new ParseTree("MUL_ASSIGN", 0, yylineno); return(MUL_ASSIGN); }
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 91 ".\\grammar.l"
+#line 91 "grammar.l"
 { count(); yylval.pt = new ParseTree("DIV_ASSIGN", 0, yylineno); return(DIV_ASSIGN); }
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 92 ".\\grammar.l"
+#line 92 "grammar.l"
 { count(); yylval.pt = new ParseTree("MOD_ASSIGN", 0, yylineno); return(MOD_ASSIGN); }
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 93 ".\\grammar.l"
+#line 93 "grammar.l"
 { count(); yylval.pt = new ParseTree("AND_ASSIGN", 0, yylineno); return(AND_ASSIGN); }
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 94 ".\\grammar.l"
+#line 94 "grammar.l"
 { count(); yylval.pt = new ParseTree("XOR_ASSIGN", 0, yylineno); return(XOR_ASSIGN); }
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 95 ".\\grammar.l"
+#line 95 "grammar.l"
 { count(); yylval.pt = new ParseTree("OR_ASSIGN", 0, yylineno); return(OR_ASSIGN); }
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 96 ".\\grammar.l"
+#line 96 "grammar.l"
 { count(); yylval.pt = new ParseTree("RIGHT_OP", 0, yylineno); return(RIGHT_OP); }
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 97 ".\\grammar.l"
+#line 97 "grammar.l"
 { count(); yylval.pt = new ParseTree("LEFT_OP", 0, yylineno); return(LEFT_OP); }
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 98 ".\\grammar.l"
+#line 98 "grammar.l"
 { count(); yylval.pt = new ParseTree("INC_OP", 0, yylineno); return(INC_OP); }
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 99 ".\\grammar.l"
+#line 99 "grammar.l"
 { count(); yylval.pt = new ParseTree("DEC_OP", 0, yylineno); return(DEC_OP); }
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 100 ".\\grammar.l"
+#line 100 "grammar.l"
 { count(); yylval.pt = new ParseTree("PTR_OP", 0, yylineno); return(PTR_OP); }
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 101 ".\\grammar.l"
+#line 101 "grammar.l"
 { count(); yylval.pt = new ParseTree("AND_OP", 0, yylineno); return(AND_OP); }
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 102 ".\\grammar.l"
+#line 102 "grammar.l"
 { count(); yylval.pt = new ParseTree("OR_OP", 0, yylineno); return(OR_OP); }
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 103 ".\\grammar.l"
+#line 103 "grammar.l"
 { count(); yylval.pt = new ParseTree("LE_OP", 0, yylineno); return(LE_OP); }
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 104 ".\\grammar.l"
+#line 104 "grammar.l"
 { count(); yylval.pt = new ParseTree("GE_OP", 0, yylineno); return(GE_OP); }
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 105 ".\\grammar.l"
+#line 105 "grammar.l"
 { count(); yylval.pt = new ParseTree("EQ_OP", 0, yylineno); return(EQ_OP); }
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 106 ".\\grammar.l"
+#line 106 "grammar.l"
 { count(); yylval.pt = new ParseTree("NE_OP", 0, yylineno); return(NE_OP); }
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 107 ".\\grammar.l"
+#line 107 "grammar.l"
 { count(); yylval.pt = new ParseTree(";", 0, yylineno); return(';'); }
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 108 ".\\grammar.l"
+#line 108 "grammar.l"
 { count(); yylval.pt = new ParseTree("{", 0, yylineno); return('{'); }
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 109 ".\\grammar.l"
+#line 109 "grammar.l"
 { count(); yylval.pt = new ParseTree("}", 0, yylineno); return('}'); }
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 110 ".\\grammar.l"
+#line 110 "grammar.l"
 { count(); yylval.pt = new ParseTree(",", 0, yylineno); return(','); }
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 111 ".\\grammar.l"
+#line 111 "grammar.l"
 { count(); yylval.pt = new ParseTree(":", 0, yylineno); return(':'); }
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
-#line 112 ".\\grammar.l"
+#line 112 "grammar.l"
 { count(); yylval.pt = new ParseTree("=", 0, yylineno); return('='); }
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
-#line 113 ".\\grammar.l"
+#line 113 "grammar.l"
 { count(); yylval.pt = new ParseTree("(", 0, yylineno); return('('); }
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
-#line 114 ".\\grammar.l"
+#line 114 "grammar.l"
 { count(); yylval.pt = new ParseTree(")", 0, yylineno); return(')'); }
 	YY_BREAK
 case 82:
 YY_RULE_SETUP
-#line 115 ".\\grammar.l"
+#line 115 "grammar.l"
 { count(); yylval.pt = new ParseTree("[", 0, yylineno); return('['); }
 	YY_BREAK
 case 83:
 YY_RULE_SETUP
-#line 116 ".\\grammar.l"
+#line 116 "grammar.l"
 { count(); yylval.pt = new ParseTree("]", 0, yylineno); return(']'); }
 	YY_BREAK
 case 84:
 YY_RULE_SETUP
-#line 117 ".\\grammar.l"
+#line 117 "grammar.l"
 { count(); yylval.pt = new ParseTree(".", 0, yylineno); return('.'); }
 	YY_BREAK
 case 85:
 YY_RULE_SETUP
-#line 118 ".\\grammar.l"
+#line 118 "grammar.l"
 { count(); yylval.pt = new ParseTree("&", 0, yylineno); return('&'); }
 	YY_BREAK
 case 86:
 YY_RULE_SETUP
-#line 119 ".\\grammar.l"
+#line 119 "grammar.l"
 { count(); yylval.pt = new ParseTree("!", 0, yylineno); return('!'); }
 	YY_BREAK
 case 87:
 YY_RULE_SETUP
-#line 120 ".\\grammar.l"
+#line 120 "grammar.l"
 { count(); yylval.pt = new ParseTree("~", 0, yylineno); return('~'); }
 	YY_BREAK
 case 88:
 YY_RULE_SETUP
-#line 121 ".\\grammar.l"
+#line 121 "grammar.l"
 { count(); yylval.pt = new ParseTree("-", 0, yylineno); return('-'); }
 	YY_BREAK
 case 89:
 YY_RULE_SETUP
-#line 122 ".\\grammar.l"
+#line 122 "grammar.l"
 { count(); yylval.pt = new ParseTree("+", 0, yylineno); return('+'); }
 	YY_BREAK
 case 90:
 YY_RULE_SETUP
-#line 123 ".\\grammar.l"
+#line 123 "grammar.l"
 { count(); yylval.pt = new ParseTree("*", 0, yylineno); return('*'); }
 	YY_BREAK
 case 91:
 YY_RULE_SETUP
-#line 124 ".\\grammar.l"
+#line 124 "grammar.l"
 { count(); yylval.pt = new ParseTree("/", 0, yylineno); return('/'); }
 	YY_BREAK
 case 92:
 YY_RULE_SETUP
-#line 125 ".\\grammar.l"
+#line 125 "grammar.l"
 { count(); yylval.pt = new ParseTree("%", 0, yylineno); return('%'); }
 	YY_BREAK
 case 93:
 YY_RULE_SETUP
-#line 126 ".\\grammar.l"
+#line 126 "grammar.l"
 { count(); yylval.pt = new ParseTree("<", 0, yylineno); return('<'); }
 	YY_BREAK
 case 94:
 YY_RULE_SETUP
-#line 127 ".\\grammar.l"
+#line 127 "grammar.l"
 { count(); yylval.pt = new ParseTree(">", 0, yylineno); return('>'); }
 	YY_BREAK
 case 95:
 YY_RULE_SETUP
-#line 128 ".\\grammar.l"
+#line 128 "grammar.l"
 { count(); yylval.pt = new ParseTree("^", 0, yylineno); return('^'); }
 	YY_BREAK
 case 96:
 YY_RULE_SETUP
-#line 129 ".\\grammar.l"
+#line 129 "grammar.l"
 { count(); yylval.pt = new ParseTree("|", 0, yylineno); return('|'); }
 	YY_BREAK
 case 97:
 YY_RULE_SETUP
-#line 130 ".\\grammar.l"
+#line 130 "grammar.l"
 { count(); yylval.pt = new ParseTree("?", 0, yylineno); return('?'); }
 	YY_BREAK
 case 98:
 YY_RULE_SETUP
-#line 132 ".\\grammar.l"
+#line 132 "grammar.l"
 { count(); }
 	YY_BREAK
 case 99:
 YY_RULE_SETUP
-#line 133 ".\\grammar.l"
+#line 133 "grammar.l"
 { /* Add code to complain about unmatched characters */ }
 	YY_BREAK
 case 100:
 YY_RULE_SETUP
-#line 135 ".\\grammar.l"
+#line 135 "grammar.l"
 ECHO;
 	YY_BREAK
 #line 1425 "lex.yy.c"
@@ -2305,7 +2305,7 @@ int main()
 	return 0;
 	}
 #endif
-#line 135 ".\\grammar.l"
+#line 135 "grammar.l"
 
 
 
