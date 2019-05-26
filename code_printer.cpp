@@ -106,5 +106,5 @@ string CodePrinter::getarrayNodeName(arrayNode node)
 }
 string CodePrinter::getLabelName()
 {
-    return "label" + to_string(label_count);
+    return "label" + to_string(label_count++);
 }

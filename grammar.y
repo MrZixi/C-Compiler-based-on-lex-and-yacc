@@ -835,6 +835,12 @@ iteration_statement:
 	| FOR '(' expression_statement expression_statement expression ')' statement {
         $$ = new ParseTree("iteration_statement", 7, $1, $2, $3, $4, $5, $6, $7);
     }
+	| FOR '(' declaration expression_statement ')' statement {
+        $$ = new ParseTree("iteration_statement", 6, $1, $2, $3, $4, $5, $6);
+    }
+	| FOR '(' declaration expression_statement expression ')' statement {
+        $$ = new ParseTree("iteration_statement", 7, $1, $2, $3, $4, $5, $6, $7);
+    }
 	;
 
 jump_statement: 

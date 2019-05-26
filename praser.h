@@ -20,6 +20,16 @@ class Praser{
         CodePrinter codePrinter;
         
         void init();
+
+        void praserParseTree(ParseTree*);
+
+	
+	    ParseTree* praser_declaration(ParseTree*);		//分析praser_declaration的节点
+	    void praser_init_declarator_list(string, ParseTree*);
+	    void praser_init_declarator(string, ParseTree* );			//分析praser_init_declarator的节点
+
+	    ParseTree* praser_function_definition(ParseTree*);
+        ParseTree* praser_statement(ParseTree*);
                                                                                 //jzy
         void praser_parameter_list(ParseTree*,string,bool);			//获取函数形参列表
 	    void praser_parameter_declaration(ParseTree*, string,bool);	//获取函数单个形参
@@ -53,6 +63,9 @@ class Praser{
         bool lookup_var_in_current_block(string);
         varNode createTempVar(string, string);
         void error(int, string);
+
+        int getBreakBlockNumber();
+        string getFuncRType();
         
     public:
         Praser(ParseTree*);
