@@ -788,7 +788,7 @@ declaration_list:
         $$ = new ParseTree("declaration_list", 1, $1);
     }
 	| declaration_list declaration {
-        $$ = new ParseTree("declaration_list", 1, $1);
+        $$ = new ParseTree("declaration_list", 2, $1, $2);
     }
 	;
 

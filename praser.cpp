@@ -19,6 +19,14 @@ void Praser::init()
     op_math_map.insert("AND_ASSIGN", "&");
     op_math_map.insert("OR_ASSIGN", "|");
     op_math_map.insert("XOR_ASSIGN", "^");
+    op_math_map.insert("GE_OP", ">=");
+    op_math_map.insert("LE_OP", "<=");
+    op_math_map.insert("<", "<");
+    op_math_map.insert(">", ">");
+    op_math_map.insert("LEFT_OP", "<<");
+    op_math_map.insert("RIGHT_OP", ">>");
+    op_math_map.insert("INC_OP", "++");
+    op_math_map.insert("DEC_OP", "--");
 }
 
 void Praser::praser_parameter_list(ParseTree *node, string funcName, bool definite)
@@ -40,9 +48,112 @@ void Praser::praser_parameter_list(ParseTree *node, string funcName, bool defini
 
 void Praser::praser_parameter_declaration(ParseTree *node, string funcName, bool definite)
 {
-    ParseTree* declaration_specifier = node->child;//
-    ParseTree* declarator = node->child->next_sibling;//
-    
+    ParseTree *declaration_specifier = node->child;    //
+    ParseTree *declarator = node->child->next_sibling; //declarator(abstruct_declarator not support)
+    ParseTree *type_specifer_or_quality = declaration_specifier->child;
+    ParseTree *direct_declarator = NULL;
+    string typeName;
+    string varName;
+    bool isConst = false;
+    bool isAddress = false;
+    if (type_specifer_or_quality->name == "type_specifer")
+    {
+        typeName = type_specifer_or_quality->content;
+        if (typeName == "void")
+        {
+            cout << "Error line:" << type_specifer_or_quality->line << ",void can't definite parameter" << endl;
+        }
+    }
+    else if (type_specifer_or_quality->name == "type_quality")
+    {
+        string quality = type_specifer_or_quality->name;
+        if (quality == "const")
+        {
+            isConst = true;
+        }
+        else
+        {
+            cout << "Error line:" << type_specifer_or_quality->line << ".No such quality" << endl;
+        }
+        ParseTree *declaration_specifier_new = type_specifer_or_quality->next_sibling;
+        if (declaration_specifier_new == NULL)
+        {
+            cout << "Error line:" << type_specifer_or_quality->line << ",need type define" << endl;
+        }
+        typeName = declaration_specifier_new->child->name;
+    }
+    //pointer
+    if (declarator->child->name == "pointer")
+    {
+        direct_declarator = declarator->child->next_sibling;
+        isAddress = true;
+    }
+    else
+    {
+        direct_declarator = declarator->child;
+    }
+    //just identifier
+    if (direct_declarator->child->name == "IDENTIFIER")
+    {
+        varName = direct_declarator->child->content;
+    }
+    //such a[]
+    else
+    {
+        if (direct_declarator->child->next_sibling->name == "[" && direct_declarator->child->next_sibling->next_sibling->name == "]")
+        {
+            isAddress = true;
+        }
+        else
+        {
+            cout << "Error line:" << type_specifer_or_quality->line << ",invalid parameter";
+        }
+        varName = direct_declarator->child->child->content;
+    }
+
+    varNode newnode;
+    newnode.name = varName;
+    newnode.type = typeName;
+    newnode.useAddress = isAddress;
+    newnode.isConst = isConst;
+
+    if (definite)
+    {
+        newnode.count = codePrinter.var_count++;
+        blockStack.back()._func.param_list.push_back(newnode);
+    }
+
+    func_map[funcName].param_list.push_back(newnode);
+    blockStack.back()._var_map.insert({varName, newnode});
+
+    if (definite)
+    {
+        codePrinter.addCode(codePrinter.createCodeforParameter(newnode));
+    }
+}
+
+void Praser::praser_expression_statement(ParseTree *node)
+{
+    if (node->child->name == "expression")
+    {
+        praser_expression(node->child);
+    }
+}
+
+varNode Praser::praser_expression(ParseTree *node)
+{
+    if (node->child->name == "expression")
+    {
+        return praser_expression(node->child);
+    }
+    else if (node->child->name == "assignment_expression")
+    {
+        return praser_assignment_expression(node->child);
+    }
+    if (node->next_sibling->name == ",")
+    {
+        return praser_assignment_expression(node->next_sibling->next_sibling);
+    }
 }
 
 varNode Praser::praser_assignment_expression(ParseTree *assign_exp)
@@ -168,34 +279,319 @@ varNode Praser::praser_inclusive_or_expression(ParseTree *inclusive_or_exp)
     }
     else
     {
+        node1 = praser_inclusive_or_expression(inclusive_or_exp->child);
+        node2 = praser_exclusive_or_expression(inclusive_or_exp->child->next_sibling->next_sibling);
+        if ((node1.type != "int" && node1.type != "long" && node1.type != "long long") || (node2.type != "int" && node2.type != "long" && node2.type != "long long"))
+        {
+            error(inclusive_or_exp->child->line, "Inclusive Or operation should only be used to integer.");
+        }
+        string tempname = "temp" + to_string(codePrinter.temp_var_count);
+        codePrinter.temp_var_count++;
+        varNode newnode = createTempVar(tempname, node1.type);
+
+        blockStack.back()._var_map.insert({tempname, newnode});
+        codePrinter.addCode(codePrinter.createCodeforVar(tempname, "|", node1, node2));
+
+        return newnode;
     }
     return node1;
 }
 varNode Praser::praser_exclusive_or_expression(ParseTree *exclusive_or_exp)
 {
+    varNode node1, node2;
+    if (exclusive_or_exp->child->name == "and_expression")
+    {
+        return praser_and_expression(exclusive_or_exp->child);
+    }
+    else
+    {
+        node1 = praser_exclusive_or_expression(exclusive_or_exp->child);
+        node2 = praser_and_expression(exclusive_or_exp->child->next_sibling->next_sibling);
+        if ((node1.type != "int" && node1.type != "long" && node1.type != "long long") || (node2.type != "int" && node2.type != "long" && node2.type != "long long"))
+        {
+            error(exclusive_or_exp->child->line, "Exclusive Or operation should only be used to integer.");
+        }
+        string tempname = "temp" + to_string(codePrinter.temp_var_count);
+        codePrinter.temp_var_count++;
+        varNode newnode = createTempVar(tempname, node1.type);
+
+        blockStack.back()._var_map.insert({tempname, newnode});
+        codePrinter.addCode(codePrinter.createCodeforVar(tempname, "^", node1, node2));
+        return newnode;
+    }
+    return node1;
 }
 varNode Praser::praser_and_expression(ParseTree *and_exp)
 {
+    varNode node1, node2;
+    if (and_exp->child->name == "equality_expression")
+    {
+        return praser_equality_expression(and_exp->child);
+    }
+    else
+    {
+        node1 = praser_and_expression(and_exp->child);
+        node2 = praser_equality_expression(and_exp->child->next_sibling->next_sibling);
+        if ((node1.type != "int" && node1.type != "long" && node1.type != "long long") || (node2.type != "int" && node2.type != "long" && node2.type != "long long"))
+        {
+            error(and_exp->child->line, "And operation should only be used to integer.");
+        }
+        string tempname = "temp" + to_string(codePrinter.temp_var_count);
+        codePrinter.temp_var_count++;
+        varNode newnode = createTempVar(tempname, node1.type);
+
+        blockStack.back()._var_map.insert({tempname, newnode});
+        codePrinter.addCode(codePrinter.createCodeforVar(tempname, "&", node1, node2));
+
+        return newnode;
+    }
+    return node1;
 }
 varNode Praser::praser_equality_expression(ParseTree *equal_exp)
 {
+    varNode node1, node2;
+    if (equal_exp->child->name == "relational_expression")
+    {
+        return praser_equality_expression(equal_exp->child);
+    }
+    else
+    {
+        node1 = praser_equality_expression(equal_exp->child);
+        node2 = praser_relational_expression(equal_exp->child->next_sibling->next_sibling);
+        string op = equal_exp->child->next_sibling->name;
+        if (node1.type != node2.type)
+        {
+            error(equal_exp->child->next_sibling->line, "Different type for two variables.");
+        }
+        string tempname = "temp" + to_string(codePrinter.temp_var_count);
+        codePrinter.temp_var_count++;
+
+        varNode newnode = createTempVar(tempname, "bool");
+        blockStack.back()._var_map.insert({tempname, newnode});
+        codePrinter.addCode(codePrinter.createCodeforVar(tempname, op, node1, node2));
+
+        newnode.boolValue = codePrinter.getNodeName(node1) + " " + op + " " + codePrinter.getNodeName(node2);
+
+        return newnode;
+    }
+    return node1;
 }
 varNode Praser::praser_relational_expression(ParseTree *relational_exp)
 {
+    varNode node1, node2;
+    if (relational_exp->child->name == "shift_expression")
+    {
+        return praser_shift_expression(relational_exp->child);
+    }
+    else
+    {
+        node1 = praser_relational_expression(relational_exp->child);
+        node2 = praser_shift_expression(relational_exp->child->next_sibling->next_sibling);
+        string op = op_math_map[relational_exp->child->next_sibling->name];
+
+        if (node1.type != node2.type)
+        {
+            error(relational_exp->child->next_sibling->line, "Different type for two variables.");
+        }
+        string tempname = "temp" + to_string(codePrinter.temp_var_count);
+        codePrinter.temp_var_count++;
+
+        varNode newnode = createTempVar(tempname, "bool");
+        blockStack.back()._var_map.insert({tempname, newnode});
+        codePrinter.addCode(codePrinter.createCodeforVar(tempname, op, node1, node2));
+
+        newnode.boolValue = codePrinter.getNodeName(node1) + " " + op + " " + codePrinter.getNodeName(node2);
+
+        return newnode;
+    }
+    return node1;
 }
 varNode Praser::praser_shift_expression(ParseTree *shift_exp)
 {
+    varNode node1, node2;
+    if (shift_exp->child->name == "additive_expression")
+    {
+        return praser_additive_expression(shift_exp->child);
+    }
+    else
+    {
+        node1 = praser_shift_expression(shift_exp->child);
+        node2 = praser_additive_expression(shift_exp->child->next_sibling->next_sibling);
+        string op = op_math_map[shift_exp->child->next_sibling->name];
+
+        if ((node1.type != "int" && node1.type != "long" && node1.type != "long long") || (node2.type != "int" && node2.type != "long" && node2.type != "long long"))
+        {
+            error(shift_exp->child->line, "Shift operation should only be used to integer.");
+        }
+        string tempname = "temp" + to_string(codePrinter.temp_var_count);
+        codePrinter.temp_var_count++;
+
+        varNode newnode = createTempVar(tempname, node1.type);
+        blockStack.back()._var_map.insert({tempname, newnode});
+        codePrinter.addCode(codePrinter.createCodeforVar(tempname, op, node1, node2));
+
+        return newnode;
+    }
+    return node1;
 }
-varNode Praser::praser_additive_expression(ParseTree *)
+varNode Praser::praser_additive_expression(ParseTree *add_exp)
 {
+    varNode node1, node2;
+    if (add_exp->child->name == "multiplicative_expression")
+    {
+        return praser_multiplicative_expression(add_exp->child);
+    }
+    else
+    {
+        node1 = praser_additive_expression(add_exp->child);
+        node2 = praser_multiplicative_expression(add_exp->child->next_sibling->next_sibling);
+        string op = add_exp->child->next_sibling->name;
+
+        if ((node1.type != "int" && node1.type != "long" && node1.type != "long long") || (node2.type != "int" && node2.type != "long" && node2.type != "long long"))
+        {
+            error(add_exp->child->line, "Add operation should only be used to integer.");
+        }
+        string tempname = "temp" + to_string(codePrinter.temp_var_count);
+        codePrinter.temp_var_count++;
+
+        varNode newnode = createTempVar(tempname, node1.type);
+        blockStack.back()._var_map.insert({tempname, newnode});
+        codePrinter.addCode(codePrinter.createCodeforVar(tempname, op, node1, node2));
+
+        return newnode;
+    }
+    return node1;
 }
-varNode Praser::praser_multiplicative_expression(ParseTree *)
+varNode Praser::praser_multiplicative_expression(ParseTree *multiply_exp)
 {
+    varNode node1, node2;
+    if (multiply_exp->child->name == "cast_expression")
+    {
+        return praser_cast_expression(multiply_exp->child);
+    }
+    else
+    {
+        node1 = praser_multiplicative_expression(multiply_exp->child);
+        node2 = praser_cast_expression(multiply_exp->child->next_sibling->next_sibling);
+        string op = multiply_exp->child->next_sibling->name;
+
+        if ((node1.type != "int" && node1.type != "long" && node1.type != "long long") || (node2.type != "int" && node2.type != "long" && node2.type != "long long"))
+        {
+            error(multiply_exp->child->line, "Mutiply operation should only be used to integer.");
+        }
+        string tempname = "temp" + to_string(codePrinter.temp_var_count);
+        codePrinter.temp_var_count++;
+
+        varNode newnode = createTempVar(tempname, node1.type);
+        blockStack.back()._var_map.insert({tempname, newnode});
+        codePrinter.addCode(codePrinter.createCodeforVar(tempname, op, node1, node2));
+
+        return newnode;
+    }
+    return node1;
 }
-varNode Praser::praser_unary_expression(ParseTree *)
+varNode Praser::praser_cast_expression(ParseTree *cast_exp)
 {
+    varNode node1;
+    if (cast_exp->child->name == "unary_expression")
+    {
+        return praser_unary_expression(cast_exp->child);
+    }
+    else
+    {
+        node1 = praser_cast_expression(cast_exp->child->next_sibling->next_sibling->next_sibling);
+        //TODO type cast check
+        node1.type = cast_exp->child->next_sibling->name;
+
+        return node1;
+    }
+    return node1;
 }
-varNode Praser::praser_postfix_expression(ParseTree *)
+varNode Praser::praser_unary_expression(ParseTree *unary_exp)
+{
+    varNode returnNode;
+    if (unary_exp->child->name == "postfix_expression")
+    {
+        return praser_postfix_expression(unary_exp->child);
+    }
+    else if (unary_exp->child->name == "INC_OP" || unary_exp->left->name == "DEC_OP")
+    {
+        string op = op_math_map[unary_exp->child->name];
+        returnNode = praser_unary_expression(unary_exp->child->next_sibling);
+        if (rnode.type != "int")
+        {
+            error(unary_exp->left->right->line, op + " operation can only use for int type.");
+        }
+
+        string tempname = "temp" + to_string(codePrinter.temp_var_count);
+        codePrinter.temp_var_count++;
+
+        varNode newnode = createTempVar(tempname, returnNode.type);
+        blockStack.back()._var_map.insert({tempname, newnode});
+        codePrinter.addCode(tempname + " := #1");
+
+        //变量储存的是地址
+        if (rnode.useAddress)
+        {
+            innerCode.addCode("*" + rnode.name + " := *" + rnode.name + +tempname);
+        }
+        else
+        {
+            innerCode.addCode(innerCode.getNodeName(rnode) + " := " + innerCode.getNodeName(rnode) + " + " + tempname);
+        }
+
+        return rnode;
+    }
+    else if (unary_exp->child->name == "unary_operator")
+    {
+        string op = unary_exp->child->left->name;
+        varNode rnode = praser_unary_expression(unary_exp->left->right);
+        if (op == "+")
+        {
+
+            if (rnode.type != "int" && rnode.type != "double")
+                error(unary_exp->left->left->line, "operator '+' can only used to int or double");
+            return rnode;
+        }
+        else if (op == "-")
+        {
+
+            if (rnode.type != "int" && rnode.type != "double")
+                error(unary_exp->left->left->line, "operator '-' can only used to int or double");
+
+            string tempzeroname = "temp" + inttostr(innerCode.tempNum);
+            ++innerCode.tempNum;
+            varNode newzeronode = createTempVar(tempzeroname, rnode.type);
+            blockStack.back().varMap.insert({tempzeroname, newzeronode});
+            innerCode.addCode(tempzeroname + " := #0");
+
+            string tempname = "temp" + inttostr(innerCode.tempNum);
+            ++innerCode.tempNum;
+            varNode newnode = createTempVar(tempname, rnode.type);
+            blockStack.back().varMap.insert({tempname, newnode});
+
+            if (rnode.useAddress)
+            {
+                innerCode.addCode(tempname + " := " + tempzeroname + " - *" + rnode.name);
+            }
+            else
+            {
+                innerCode.addCode(tempname + " := " + tempzeroname + " - " + innerCode.getNodeName(rnode));
+            }
+            return newnode;
+        }
+        else if (op == "~")
+        {
+        }
+        else if (op == "!")
+        {
+        }
+    }
+    else if (unary_exp->child->name == "SIZEOF")
+    {
+    }
+}
+varNode Praser::praser_postfix_expression(ParseTree *postfix_exp)
 {
 }
 
