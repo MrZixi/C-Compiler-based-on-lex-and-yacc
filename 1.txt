@@ -1,7 +1,7 @@
-int p(int a,int b) {
-    return a+b;
-}
 int main(){
-    int a, b = 0;
-	a>b? a=0:b=1;
+int a, b;
+    if(!(a==0))
+	{
+		b = 1;
+	}
 }
