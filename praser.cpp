@@ -386,7 +386,7 @@ varNode Praser::praser_unary_expression(ParseTree* unary_exp)
     {
 		return praser_postfix_expression(unary_exp ->child);
 	}
-    else if (unary_exp->child->name == "INC_OP" || unary_exp->left->name == "DEC_OP") 
+    else if (unary_exp->child->name == "INC_OP" || unary_exp->child->name == "DEC_OP") 
     {
         string op = op_math_map[unary_exp->child->name];
 		returnNode = praser_unary_expression(unary_exp->child->next_sibling);
@@ -448,7 +448,7 @@ varNode Praser::praser_unary_expression(ParseTree* unary_exp)
 				codePrinter.addCode(tempname + " := " + tempzeroname + " - *" + returnNode.name);
 			}
 			else {
-				codePrinter.addCode(tempname + " := " + tempzeroname + " - " + codePrinter.getNodeName(rnode));
+				codePrinter.addCode(tempname + " := " + tempzeroname + " - " + codePrinter.getNodeName(returnNode));
 			}
 			return newnode;
 		}
