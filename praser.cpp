@@ -390,9 +390,9 @@ varNode Praser::praser_unary_expression(ParseTree* unary_exp)
     {
         string op = op_math_map[unary_exp->child->name];
 		returnNode = praser_unary_expression(unary_exp->child->next_sibling);
-		if (rnode.type != "int")
+		if (returnNode.type != "int" && returnNode.type != "long" && returnNode.type != "long long")
         {
-	        error(unary_exp->left->right->line, op + " operation can only use for int type.");
+	        error(unary_exp->child->next_sibling->line, op + " operation can only use for integer type.");
         }
 		
 
@@ -405,65 +405,197 @@ varNode Praser::praser_unary_expression(ParseTree* unary_exp)
 
 
 		//变量储存的是地址
-		if (rnode.useAddress) {
-			innerCode.addCode("*" + rnode.name + " := *" + rnode.name +  + tempname);
+		if (returnNode.useAddress) {
+			codePrinter.addCode("*" + returnNode.name + " := *" + returnNode.name + " " + op[0] + " " + tempname);
 		}
 		else {
-			innerCode.addCode(innerCode.getNodeName(rnode) + " := " + innerCode.getNodeName(rnode) + " + "  + tempname);
+			codePrinter.addCode(codePrinter.getNodeName(returnNode) + " := " + codePrinter.getNodeName(returnNode) + " " + op[0] + " "  + tempname);
 		}
 
-		return rnode;
-
+		return returnNode;
 	}
-	else if (unary_exp->child->name == "unary_operator") {
-		string op = unary_exp->child->left->name;
-		varNode rnode = praser_unary_expression(unary_exp->left->right);
-		if (op == "+") {
+	else if (unary_exp->child->name == "unary_operator") 
+    {
+		string op = unary_exp->child->child->name;
+		returnNode = praser_unary_expression(unary_exp->child->next_sibling);
+		if (op == "+") 
+        {
 
-			if (rnode.type != "int" && rnode.type != "double")
-				error(unary_exp->left->left->line, "operator '+' can only used to int or double");
-			return rnode;
+			if (returnNode.type != "int" && returnNode.type != "double")
+				error(unary_exp->child->child->line, "operator '+' can only used to int or double");
+			return returnNode;
 		}
-		else if (op == "-") {
+		else if (op == "-") 
+        {
 
-			if (rnode.type != "int" && rnode.type != "double")
-				error(unary_exp->left->left->line, "operator '-' can only used to int or double");
+			if (returnNode.type != "int" && returnNode.type != "long" && returnNode.type != "long long" && returnNode.type != "float" && returnNode.type != "double")
+				error(unary_exp->child->child->line, "operator '-' can only used to integer or double");
 
-			string tempzeroname = "temp" + inttostr(innerCode.tempNum);
-			++innerCode.tempNum;
-			varNode newzeronode = createTempVar(tempzeroname, rnode.type);
-			blockStack.back().varMap.insert({ tempzeroname,newzeronode });
-			innerCode.addCode(tempzeroname + " := #0");
+			string tempzeroname = "temp" + to_string(codePrinter.temp_var_count);
+			codePrinter.temp_var_count++;
+			varNode newzeronode = createTempVar(tempzeroname, returnNode.type);
+			blockStack.back()._var_map.insert({tempzeroname, newzeronode });
+			codePrinter.addCode(tempzeroname + " := #0");
 
-			string tempname = "temp" + inttostr(innerCode.tempNum);
-			++innerCode.tempNum;
-			varNode newnode = createTempVar(tempname, rnode.type);
-			blockStack.back().varMap.insert({ tempname,newnode });
+            string tempname = "temp" + to_string(codePrinter.temp_var_count);
+		    codePrinter.temp_var_count++;
+
+		    varNode newnode = createTempVar(tempname, returnNode.type);
+		    blockStack.back()._var_map.insert({ tempname,newnode});
 
 
-			if (rnode.useAddress) {
-				innerCode.addCode(tempname + " := " + tempzeroname + " - *" + rnode.name);
+			if (returnNode.useAddress) {
+				codePrinter.addCode(tempname + " := " + tempzeroname + " - *" + returnNode.name);
 			}
 			else {
-				innerCode.addCode(tempname + " := " + tempzeroname + " - " + innerCode.getNodeName(rnode));
+				codePrinter.addCode(tempname + " := " + tempzeroname + " - " + codePrinter.getNodeName(rnode));
 			}
 			return newnode;
 		}
 		else if (op == "~") {
-
+            //TODO
 		}
 		else if (op == "!") {
-
+            //TODO
 		}
 	}
     else if(unary_exp->child->name == "SIZEOF")
     {
-
+            //TODO
     }
 }
 varNode Praser::praser_postfix_expression(ParseTree* postfix_exp)
 {
+    varNode node1;
+    if(postfix_exp->child->name == "primary_expression")
+    {
+        return praser_primary_expression(postfix_exp->child);
+    }
+    node1 = praser_postfix_expression(postfix_exp->child);
 
+    if(postfix_exp->child->next_sibling->name == "[")
+    {
+        //array index
+        string arrayName = postfix_exp->child->child->child->content;
+		ParseTree* expression = postfix_exp->child->next_sibling->next_sibling;
+		varNode index_node = praser_expression(expression);
+		arrayNode array_node = getArrayNode(arrayName);
+
+		if (array_node.count < 0)
+			error(postfix_exp->child->next_sibling->line, "Undifined array: " + arrayName);
+
+		varNode tempVar;
+		string tempName = "temp" + to_string(codePrinter.temp_var_count);
+		codePrinter.temp_var_count++;
+		tempVar.name = tempName;
+		tempVar.type = array_node.type;
+		tempVar.useAddress = true;
+		blockStack.back()._var_map.insert({tempName,tempVar});
+
+
+		if (array_node.type == "int" || array_node.type == "double") 
+        {
+			varNode tempVar2, tempVar3;;
+
+			string tempName2 = "temp" + to_string(codePrinter.temp_var_count);
+			codePrinter.temp_var_count++;
+			tempVar2.name = tempName2;
+			tempVar2.type = "int";
+			blockStack.back()._var_map.insert({tempName2, tempVar2});
+
+			string tempName3 = "temp" + to_string(codePrinter.temp_var_count);
+			codePrinter.temp_var_count++;
+			tempVar3.name = tempName3;
+			tempVar3.type = "int";
+			blockStack.back()._var_map.insert({ tempName3,tempVar3 });
+			if (array_node.type == "int") 
+            {
+				codePrinter.addCode(tempName3 + " := #4");
+			}
+			else if (array_node.type == "double") 
+            {
+				codePrinter.addCode(tempName3 + " := #8");
+			}
+			codePrinter.addCode(tempName2 + " := " + codePrinter.getNodeName(index_node) + " * " + tempName3);
+			codePrinter.addCode(tempName + " := &" + codePrinter.getarrayNodeName(array_node) + " + " + codePrinter.getNodeName(tempVar2));
+			return tempVar;
+		}
+
+		codePrinter.addCode(tempName + " := &" + codePrinter.getarrayNodeName(array_node) + " + " + codePrinter.getNodeName(index_node));
+		return tempVar;        
+    }
+    else if(postfix_exp->child->next_sibling->name == "(")
+    {
+        //function call
+		string funcName = postfix_exp->child->child->child->content;
+		varNode newNode;
+		
+		if (func_map.find(funcName) == func_map.end()) {
+			error(postfix_exp->child->child->child->line, "Undefined function " + funcName);
+		}
+
+		if (postfix_exp->child->next_sibling->next_sibling->name == "argument_expression_list") 
+        {
+            //function call with params
+			praser_argument_expression_list(postfix_exp->child->next_sibling->next_sibling, funcName);
+		}
+
+		funcNode func = func_map[funcName];
+		
+		if (func.return_type == "void") 
+        {
+			codePrinter.addCode("CALL " + funcName);
+		}
+		else 
+        {
+			string tempname = "temp" + to_string(codePrinter.temp_var_count);
+			codePrinter.temp_var_count++;
+
+			newNode = createTempVar(tempname, func_map[funcName].return_type);
+			codePrinter.addCode(tempname + " := CALL " + funcName);
+		}
+
+		return newNode;
+    }
+    else if(postfix_exp->child->next_sibling->name == ".")
+    {
+        
+    }
+    else if(postfix_exp->child->next_sibling->name == "PTR_OP")
+    {
+        
+    }
+    else if(postfix_exp->child->next_sibling->name == "INC_OP" || postfix_exp->child->next_sibling->name == "DEC_OP")
+    {   
+        string op = op_math_map[postfix_exp->child->next_sibling->name];
+		if(node1.type != "int")
+			error(postfix_exp->child->next_sibling->line, op + " operation can only use for int type.");
+
+        string tempname1 = "temp" + to_string(codePrinter.temp_var_count);
+		codePrinter.temp_var_count++;
+		varNode newnode1 = createTempVar(tempname1, "int");
+		blockStack.back()._var_map.insert({tempname1, newnode1});
+
+        string tempname2 = "temp" + to_string(codePrinter.temp_var_count);
+		codePrinter.temp_var_count++;
+		varNode newnode2 = createTempVar(tempname2, "int");
+		blockStack.back()._var_map.insert({tempname2, newnode2});
+
+		codePrinter.addCode(tempname2 + " := #1");
+
+		//变量储存的是地址
+		if (node1.useAddress) {
+			codePrinter.addCode(tempname1 + " := *" + node1.name);
+			codePrinter.addCode("*" + node1.name + " := *" + node1.name + " + " + tempname2);
+		}
+		else {
+			codePrinter.addCode(tempname1 += " := " + codePrinter.getNodeName(node1));
+			codePrinter.addCode(codePrinter.getNodeName(node1) +  " := " + codePrinter.getNodeName(node1) + " " + op[0] + " " + tempname2);
+		}
+
+		return newnode1;
+    }
+    return node1;
 }
 
 void Praser::praser_argument_expression_list(ParseTree* argument_exp, string func_name)

@@ -1,8 +1,7 @@
-int p(int a,int b) {
-    enum {q,w,e};
-    return a+b;
-}
 int main(){
-    int a, b = 0;
-    int c = p(a,b);
+int a, b;
+    if(!(a==0))
+	{
+		b = 1;
+	}
 }
