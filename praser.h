@@ -28,7 +28,7 @@ class Praser{
 	    void praser_init_declarator_list(string, ParseTree*);
 	    void praser_init_declarator(string, ParseTree* );			//分析praser_init_declarator的节点
 
-	    ParseTree* praser_function_definition(ParseTree*);
+	    ParseTree* praser_function_definition(ParseTree*);//lcx
         ParseTree* praser_statement(ParseTree*);
                                                                                 //jzy
         void praser_parameter_list(ParseTree*,string,bool);			//获取函数形参列表
@@ -58,8 +58,9 @@ class Praser{
         varNode praser_cast_expression(ParseTree*);
 	    varNode praser_unary_expression(ParseTree*);
 	    varNode praser_postfix_expression(ParseTree*);
+        varNode praser_primary_expression(ParseTree*);
 
-        
+        varNode lookupNode(string);
         bool lookup_var_in_current_block(string);
         varNode createTempVar(string, string);
         void error(int, string);

@@ -30,7 +30,8 @@ void CodeOptimizer::establishTempMap(vector<string>& codeList)
             {
                 if(temp_code.find("CALL") != string::npos)
                 {
-                    
+                    //gurantee that it won't be optimized
+                    tempMap[temp_name].num += 2;
                 }
                 tempMap[temp_name].num++;
             }

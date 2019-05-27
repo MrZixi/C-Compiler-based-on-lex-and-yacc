@@ -1,9 +1,10 @@
 #include "praser.h"
-
+#include<algorithm>
 Praser::Praser(ParseTree *root)
 {
     this->root = root;
     init();
+    praserParseTree(root);
 }
 void Praser::init()
 {
@@ -28,7 +29,24 @@ void Praser::init()
     op_math_map.insert("INC_OP", "++");
     op_math_map.insert("DEC_OP", "--");
 }
-
+void Praser::praserParseTree(ParseTree* temp_node)
+{
+    if(temp_node == NULL || temp_node->line < 0) return;
+    if(temp_node->name == "declaration")
+    {
+        temp_node =  praser_declaration(temp_node);
+    }
+    else if(temp_node->name == "function_definition")
+    {
+        temp_node = praser_function_definition(temp_node);
+    }
+    else if(temp_node->name == "statement")
+    {
+        temp_node = praser_statement(temp_node);
+    }
+    praserParseTree(temp_node->child);
+    praserParseTree(temp_node->child->next_sibling);    
+}
 void Praser::praser_parameter_list(ParseTree *node, string funcName, bool definite)
 {
     if (node->child->name == "parameter_list")
@@ -131,7 +149,14 @@ void Praser::praser_parameter_declaration(ParseTree *node, string funcName, bool
         codePrinter.addCode(codePrinter.createCodeforParameter(newnode));
     }
 }
+ParseTree* Praser::praser_function_definition(ParseTree* funtion_def)
+{
 
+}
+ParseTree* Praser::praser_statement(ParseTree* statment)
+{
+
+}
 void Praser::praser_expression_statement(ParseTree *node)
 {
     if (node->child->name == "expression")
@@ -399,9 +424,16 @@ varNode Praser::praser_assignment_expression(ParseTree *assign_exp)
 }
 varNode Praser::praser_conditional_expression(ParseTree *conditional_exp)
 {
-    if (conditional_exp->child->name == "logical_or_expression")
+    varNode node1, node2, node3;
+    if (conditional_exp->child->next_sibling == NULL)
     {
         return praser_logical_or_expression(conditional_exp->child);
+    }
+    else
+    {
+        node1 = praser_logical_or_expression(conditional_exp->child);
+        node2 = praser_expression(conditional_exp->child->next_sibling->next_sibling);
+        node3 = praser_conditional_expression(conditional_exp->child->next_sibling->next_sibling->next_sibling->next_sibling);
     }
     
 }
@@ -410,7 +442,7 @@ varNode Praser::praser_logical_or_expression(ParseTree *logical_or_exp)
     varNode node1, node2;
     if (logical_or_exp->child->name == "logical_and_expression")
     {
-        return praser_logical_or_expression(logical_or_exp->child);
+        return praser_logical_and_expression(logical_or_exp->child);
     }
     else if (logical_or_exp->child->name == "logical_or_expression")
     {
@@ -764,8 +796,8 @@ varNode Praser::praser_unary_expression(ParseTree *unary_exp)
             varNode newnode = createTempVar(tempname, returnNode.type);
             blockStack.back()._var_map.insert({tempname, newnode});
 
-            if (rnode.type != "int" && rnode.type != "double")
-                error(unary_exp->left->left->line, "operator '-' can only used to int or double");
+             if (returnNode.type != "int" && returnNode.type != "long" && returnNode.type != "long long" && returnNode.type != "float" && returnNode.type != "double")
+                error(unary_exp->child->child->line, "operator '-' can only used to int or double");
 
             if (returnNode.useAddress)
             {
@@ -925,7 +957,63 @@ varNode Praser::praser_postfix_expression(ParseTree *postfix_exp)
     }
     return node1;
 }
+varNode Praser::praser_primary_expression(ParseTree* primary_exp)
+{
+    varNode returnNode; 
+    if (primary_exp->child->name == "IDENTIFIER") 
+    {
+		string content = primary_exp->child->content;
+		returnNode = lookupNode(content);
+		if (returnNode.count < 0) 
+        {
+			error(primary_exp->child->line, "Undefined variable " + content);
+		}
+		return returnNode;
+	}
+	else if (primary_exp->child->name == "TRUE" || primary_exp->child->name == "FALSE") 
+    {
+		string content = primary_exp->child->content;
+		string tempname = "temp" + to_string(codePrinter.temp_var_count);
+		codePrinter.temp_var_count++;
+		varNode newNode = createTempVar(tempname, "bool");
+		blockStack.back()._var_map.insert({ tempname,newNode });
+		if(primary_exp->child->name == "TRUE") 
+			codePrinter.addCode(tempname + " := #1");
+		else 
+        {
+			codePrinter.addCode(tempname + " := #0");
+		}
+		return newNode;
+	}
+	else if (primary_exp->child->name == "CONSTANT_INT" || primary_exp->child->name == "CONSTANT_FLOAT" || primary_exp->child->name == "CONSTANT_CHAR") 
+    {
+		string content = primary_exp->child->content;
+		string tempname = "temp" + to_string(codePrinter.temp_var_count);
+		codePrinter.temp_var_count++;
+        string temptype = primary_exp->child->name.substr(9);
+        transform(temptype.begin(), temptype.end(), temptype.begin(), ::tolower);
+		varNode newNode = createTempVar(tempname, temptype);
+		blockStack.back()._var_map.insert({tempname, newNode});
+		codePrinter.addCode(tempname + " := #"  + content);
+		return newNode;
+	}
+    else if (primary_exp->child->name == "STRING_LITERAL")
+    {
+        string content = primary_exp->child->content;
+		string tempname = "temp" + to_string(codePrinter.temp_var_count);
+		codePrinter.temp_var_count++;
 
+		varNode newNode = createTempVar(tempname, "char");
+        newNode.useAddress = true;
+		blockStack.back()._var_map.insert({tempname, newNode});
+		codePrinter.addCode(tempname + " := #"  + content);
+		return newNode;
+    }
+	else if (primary_exp->child->name == "(") 
+    {
+		return praser_expression(primary_exp->child->next_sibling);
+	}
+}
 void Praser::praser_argument_expression_list(ParseTree *argument_exp, string func_name)
 {
     ParseTree *argument_list = argument_exp->child;
@@ -954,9 +1042,22 @@ void Praser::praser_argument_expression_list(ParseTree *argument_exp, string fun
         error(argument_list->line, "The number of arguments doesn't equal to the function parameters number in " + func_name + ".");
     }
 }
-
+varNode Praser::lookupNode(string nodename)
+{
+    varNode returnNode;
+    for(int i = blockStack.size - 1;i >= 0;i--)
+    {
+        if(blockStack[i]._var_map.find(nodename) != blockStack[i]._var_map.end())
+        {
+            return blockStack[i]._var_map[nodename];
+        }
+    }
+    returnNode.count = -1;
+    return returnNode;
+}
 bool Praser::lookup_var_in_current_block(string name)
 {
+    return blockStack.back()._var_map.find(name) != blockStack.back()._var_map.end();
 }
 varNode Praser::createTempVar(string tempname, string temptype)
 {
