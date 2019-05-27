@@ -344,7 +344,37 @@ void Praser::praser_iteration_statement(ParseTree *node)
     }
     else if (node->child->name == "do")
     {
-        
+        block newblock;
+        newblock.breakable = true;
+        blockStack.push_back(newblock);
+
+        ParseTree *statement = node->child->next_sibling;
+        ParseTree *expression = node->child->next_sibling->next_sibling->next_sibling->next_sibling;
+
+        string label1 = codePrinter.getLabelName();
+        string label2 = codePrinter.getLabelName();
+
+        blockStack.back().gotoLabel = label2;
+
+        codePrinter.addCode("LABEL " + label1 + " :");
+
+        praser_statement(statement);
+        varNode var = praser_expression(expression);
+
+        if (var.type == "bool")
+        {
+            codePrinter.addCode("IF" + var.boolValue + "GOTO" + label1);
+        }
+        else
+        {
+            string tempzeroname = "temp" + to_string(codePrinter.temp_var_count);
+            ++codePrinter.temp_var_count;
+            varNode newzonde = createTempVar(tempzeroname, "int");
+            codePrinter.addCode(tempzeroname + " := #0");
+
+            codePrinter.addCode("IF" + codePrinter.getNodeName(var) + "!=" + tempzeroname + "GOTO" + label2);
+        }
+        codePrinter.addCode("GOTO" + label1);
     }
 }
 
@@ -403,7 +433,6 @@ varNode Praser::praser_conditional_expression(ParseTree *conditional_exp)
     {
         return praser_logical_or_expression(conditional_exp->child);
     }
-    
 }
 varNode Praser::praser_logical_or_expression(ParseTree *logical_or_exp)
 {

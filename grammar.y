@@ -49,9 +49,9 @@ void yyerror(const char*);
     
 %type <pt> parameter_list parameter_declaration identifier_list direct_abstract_declarator struct_declaration struct_declarator
 %type <pt> abstract_declarator initializer initializer_list struct_or_union_specifier struct_or_union struct_declaration_list
-%type <pt> statement labeled_statement compound_statement expression_statement enum_specifier enumerator_list direct_declarator enumerator
+%type <pt> statement labeled_statement compound_statement expression_statement enum_specifier enumerator_list direct_declarator enumerator block_item block_item_list
 %type <pt> selection_statement iteration_statement jump_statement translation_unit external_declaration function_definition 
-%type <pt> declaration_list parameter_type_list type_qualifier_list statement_list
+%type <pt> declaration_list parameter_type_list type_qualifier_list 
 
 
 %%
@@ -296,7 +296,7 @@ assignment_expression:
         $$ = new ParseTree("assignment_expression", 1, $1);
     }
 	| unary_expression assignment_operator assignment_expression {
-        $$ = new ParseTree("conditional_expression", 3, $1, $2, $3);
+        $$ = new ParseTree("assignment_expression", 3, $1, $2, $3);
     }
     ;
 
@@ -583,7 +583,7 @@ direct_declarator:
 	| '(' declarator ')' {
         $$ = new ParseTree("direct_declarator", 3, $1, $2, $3);
     }
-	| direct_declarator '[' constant_expression ']' {
+	| direct_declarator '[' assignment_expression ']' {
         $$ = new ParseTree("direct_declarator", 4, $1, $2, $3, $4);
     }
 	| direct_declarator '[' ']' {
@@ -691,13 +691,19 @@ direct_abstract_declarator:
 	| '[' ']' {
         $$ = new ParseTree("direct_abstract_declarator", 2, $1, $2);
     }
-	| '[' constant_expression ']' {
+	| '[' assignment_expression ']' {
         $$ = new ParseTree("direct_abstract_declarator", 3, $1, $2, $3);
     }
 	| direct_abstract_declarator '[' ']' {
         $$ = new ParseTree("direct_abstract_declarator", 3, $1, $2, $3);
     }
-	| direct_abstract_declarator '[' constant_expression ']' {
+	| direct_abstract_declarator '[' assignment_expression ']' {
+        $$ = new ParseTree("direct_abstract_declarator", 4, $1, $2, $3, $4);
+    }
+    | '[' '*' ']' {
+        $$ = new ParseTree("direct_abstract_declarator", 3, $1, $2, $3);
+    }
+	| direct_abstract_declarator '[' '*' ']' {
         $$ = new ParseTree("direct_abstract_declarator", 4, $1, $2, $3, $4);
     }
 	| '(' ')' {
@@ -772,32 +778,26 @@ compound_statement:
     '{' '}' {
         $$ = new ParseTree("compound_statement", 2, $1, $2);
     }
-	| '{' statement_list '}' {
+	| '{' block_item_list '}' {
         $$ = new ParseTree("compound_statement", 3, $1, $2, $3);
-    }
-	| '{' declaration_list '}' {
-        $$ = new ParseTree("compound_statement", 3, $1, $2, $3);
-    }
-	| '{' declaration_list statement_list '}' {
-        $$ = new ParseTree("compound_statement", 4, $1, $2, $3, $4);
     }
 	;
 
-declaration_list: 
+block_item_list: 
+    block_item {
+        $$ = new ParseTree("block_item_list", 1, $1);
+    }
+	| block_item_list block_item {
+        $$ = new ParseTree("block_item_list", 2, $1, $2);
+    }
+	;
+
+block_item: 
     declaration {
-        $$ = new ParseTree("declaration_list", 1, $1);
+        $$ = new ParseTree("block_item", 1, $1);
     }
-	| declaration_list declaration {
-        $$ = new ParseTree("declaration_list", 2, $1, $2);
-    }
-	;
-
-statement_list: 
-    statement {
-        $$ = new ParseTree("statement_list", 1, $1);
-    }
-	| statement_list statement {
-        $$ = new ParseTree("statement_list", 2, $1, $2);
+	| statement {
+        $$ = new ParseTree("block_item", 1, $1);
     }
 	;
 
@@ -887,6 +887,15 @@ function_definition:
         $$ = new ParseTree("function_definition", 3, $1, $2, $3);
     }
     ;
+
+declaration_list: 
+    declaration {
+        $$ = new ParseTree("declaration_list", 1, $1);
+    }
+	| declaration_list declaration {
+        $$ = new ParseTree("declaration_list", 2, $1, $2);
+    }
+	;    
 
 %%
 
