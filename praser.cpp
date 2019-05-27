@@ -150,6 +150,232 @@ void Praser::praser_parameter_declaration(ParseTree *node, string funcName, bool
         codePrinter.addCode(codePrinter.createCodeforParameter(newnode));
     }
 }
+
+ParseTree *Praser::praser_declaration(ParseTree *node)
+{
+    ParseTree *declaration_specifiers = node->child;
+    if (declaration_specifiers->next_sibling->name == ";")
+    {
+        return node->next_sibling;
+    }
+    string vartype = declaration_specifiers->child->child->content;
+
+    if (vartype == "void")
+    {
+        error(node->line, "void type can't assign to variable"); //报错
+    }
+    ParseTree *init = declaration_specifiers->next_sibling; //init_declarator_list
+    praser_init_declarator_list(vartype, init);
+    return node->next_sibling;
+}
+
+void Praser::praser_init_declarator_list(string vartype, ParseTree *node)
+{
+    if (node->child->name == "init_declarator_list")
+    {
+        praser_init_declarator_list(vartype, node->child);
+    }
+    else if (node->child->name == "init_declarator")
+    {
+        praser_init_declarator(vartype, node->child);
+    }
+
+    if (node->next_sibling->name == ",")
+    {
+        praser_init_declarator(vartype, node->next_sibling->next_sibling);
+    }
+}
+
+/*declarator: 
+    pointer direct_declarator {
+        $$ = new ParseTree("declarator", 2, $1, $2);
+    }
+	| direct_declarator {
+        $$ = new ParseTree("declarator", 1, $1);
+    }
+	;
+*/
+void Praser::praser_init_declarator(string vartype, ParseTree *node)
+{
+    ParseTree *declarator = node->child;
+
+    if (declarator->next_sibling == NULL)
+    {
+        ParseTree *direct_declarator = NULL;
+        //if is pointer
+        if (declarator->child->name == "pointer")
+        {
+            error(node->line, "do not support pointer");
+        }
+        else
+        {
+            direct_declarator = declarator->child;
+            //id
+            if (direct_declarator->child->name == "IDENTIFIER")
+            {
+                ParseTree *id = direct_declarator->child;
+                string var = id->content;
+                if (!lookup_var_in_current_block(var))
+                {
+                    varNode newvar;
+                    newvar.name = var;
+                    newvar.type = vartype;
+                    newvar.count = codePrinter.var_count++;
+                    blockStack.back()._var_map.insert({var, newvar});
+                }
+                else
+                {
+                    error(node->line, "Variable multiple declaration.");
+                }
+            }
+            else
+            {
+                //func
+                if (direct_declarator->child->next_sibling->name == "(")
+                {
+                    string funcName = direct_declarator->child->child->content;
+                    string funcType = vartype;
+                    if (blockStack.size() > 1)
+                    {
+                        error(direct_declarator->line, "Function declaration must at global environment.");
+                    }
+                    ParseTree *parameter_list = direct_declarator->child->next_sibling->next_sibling;
+                    funcNode newFunc;
+                    newFunc.is_defined = false;
+                    newFunc.name = funcName;
+                    newFunc.return_type = funcType;
+                    func_map.insert({funcName, newFunc});
+
+                    praser_parameter_list(parameter_list, funcName, false);
+                }
+                //arry
+                else if (direct_declarator->child->next_sibling->name == "[")
+                {
+                    string arrayName = direct_declarator->child->child->content;
+                    string arrayType = vartype;
+                    ParseTree *assign_exp = direct_declarator->child->next_sibling->next_sibling;
+                    varNode rnode = praser_assignment_expression(assign_exp);
+
+                    if (rnode.type != "int")
+                    {
+                        error(declarator->line, "Array size must be int.");
+                    }
+
+                    varNode tnode;
+                    if (arrayType == "int" || arrayType == "float")
+                    {
+                        string tempname = "temp" + to_string(codePrinter.temp_var_count);
+                        ++codePrinter.temp_var_count;
+                        tnode = createTempVar(tempname, "int");
+
+                        blockStack.back()._var_map.insert({tempname, tnode});
+
+                        varNode tempVar3;
+                        string tempName3 = "temp" + to_string(codePrinter.temp_var_count);
+                        ++codePrinter.temp_var_count;
+                        tempVar3.name = tempName3;
+                        tempVar3.type = "int";
+                        blockStack.back()._var_map.insert({tempName3, tempVar3});
+
+                        codePrinter.addCode(tempName3 + " := #4");
+
+                        codePrinter.addCode(tnode.name + " := " + tempName3 + " * " + rnode.name);
+                    }
+                    else if (arrayType == "double")
+                    {
+                        string tempname = "temp" + to_string(codePrinter.temp_var_count);
+                        ++codePrinter.temp_var_count;
+                        tnode = createTempVar(tempname, "int");
+
+                        blockStack.back()._var_map.insert({tempname, tnode});
+
+                        varNode tempVar3;
+                        string tempName3 = "temp" + to_string(codePrinter.temp_var_count);
+                        ++codePrinter.temp_var_count;
+                        tempVar3.name = tempName3;
+                        tempVar3.type = "int";
+                        blockStack.back()._var_map.insert({tempName3, tempVar3});
+
+                        codePrinter.addCode(tempName3 + " := #8");
+
+                        codePrinter.addCode(tnode.name + " := " + tempName3 + " * " + rnode.name);
+                    }
+                    else if (arrayType == "bool")
+                    {
+                        tnode = rnode;
+                    }
+                    else
+                    {
+                        error(declarator->line, "Array initialize error for type.");
+                    }
+
+                    arrayNode anode;
+                    anode.name = arrayName;
+                    anode.type = arrayType;
+                    anode.count = codePrinter.array_count++;
+                    codePrinter.addCode("DEC " + codePrinter.getarrayNodeName(anode) + " " + tnode.name);
+
+                    blockStack.back()._array_map.insert({arrayName, anode});
+                }
+            }
+        }
+    }
+    else if (declarator->next_sibling->name == "=")
+    {
+        ParseTree *direct_declarator = NULL;
+        //if is pointer
+        if (declarator->child->name == "pointer")
+        {
+            error(node->line, "do not support pointer");
+        }
+        else
+        {
+            varNode newvar;
+            direct_declarator = declarator->child;
+            if (direct_declarator->child->name == "IDENTIFIER")
+            {
+                ParseTree *id = direct_declarator->child;
+                string var = id->content;
+                if (!lookup_var_in_current_block(var))
+                {
+                    newvar.name = var;
+                    newvar.type = vartype;
+                    newvar.count = codePrinter.var_count;
+                    blockStack.back()._var_map.insert({var, newvar});
+                }
+                else
+                {
+                    error(declarator->child->line, "Variable multiple declaration.");
+                }
+            }
+
+            ParseTree *initializer = direct_declarator->next_sibling->next_sibling;
+            if (initializer == NULL)
+            {
+                error(declarator->line, "Lack the initializer for variable.");
+            }
+            else
+            {
+                if (initializer->child->name == "assignment_expression")
+                {
+                    varNode rnode = praser_assignment_expression(initializer->child);
+                    codePrinter.addCode(codePrinter.createCodeforAssign(newvar, rnode));
+                    string rtype = rnode.type;
+                    if (rtype != vartype)
+                    {
+                        error(initializer->child->line, "Wrong type to variable " + declarator->child->content + ": " +
+                                                            rtype + " to " + vartype);
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        error(node->line, "Wrong value to variable");
+    }
+}
+
 ParseTree *Praser::praser_function_definition(ParseTree *funtion_def)
 {
 }
@@ -626,7 +852,7 @@ void Praser::praser_iteration_statement(ParseTree *node)
                 praser_expression(expression);
 
                 codePrinter.addCode("GOTO " + label1);
-				codePrinter.addCode("LABEL " + label3 + " :");
+                codePrinter.addCode("LABEL " + label3 + " :");
 
                 blockStack.pop_back();
             }
