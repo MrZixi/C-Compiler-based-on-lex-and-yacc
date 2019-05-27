@@ -46,7 +46,7 @@ void Praser::praserParseTree(ParseTree *temp_node)
         temp_node = praser_statement(temp_node);
     }
     praserParseTree(temp_node->child);
-    praserParseTree(temp_node->child->next_sibling);
+    praserParseTree(temp_node->next_sibling);
 }
 void Praser::praser_parameter_list(ParseTree *node, string funcName, bool definite)
 {
