@@ -21,6 +21,7 @@
         "type_traits": "cpp",
         "typeinfo": "cpp",
         "string": "cpp",
-        "vector": "cpp"
+        "vector": "cpp",
+        "unordered_map": "cpp"
     } // 效果效果比cpptools要好
 }

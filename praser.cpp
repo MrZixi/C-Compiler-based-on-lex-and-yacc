@@ -1,5 +1,5 @@
 #include "praser.h"
-#include<algorithm>
+#include <algorithm>
 Praser::Praser(ParseTree *root)
 {
     this->root = root;
@@ -29,23 +29,24 @@ void Praser::init()
     op_math_map.insert("INC_OP", "++");
     op_math_map.insert("DEC_OP", "--");
 }
-void Praser::praserParseTree(ParseTree* temp_node)
+void Praser::praserParseTree(ParseTree *temp_node)
 {
-    if(temp_node == NULL || temp_node->line < 0) return;
-    if(temp_node->name == "declaration")
+    if (temp_node == NULL || temp_node->line < 0)
+        return;
+    if (temp_node->name == "declaration")
     {
-        temp_node =  praser_declaration(temp_node);
+        temp_node = praser_declaration(temp_node);
     }
-    else if(temp_node->name == "function_definition")
+    else if (temp_node->name == "function_definition")
     {
         temp_node = praser_function_definition(temp_node);
     }
-    else if(temp_node->name == "statement")
+    else if (temp_node->name == "statement")
     {
         temp_node = praser_statement(temp_node);
     }
     praserParseTree(temp_node->child);
-    praserParseTree(temp_node->child->next_sibling);    
+    praserParseTree(temp_node->child->next_sibling);
 }
 void Praser::praser_parameter_list(ParseTree *node, string funcName, bool definite)
 {
@@ -149,13 +150,11 @@ void Praser::praser_parameter_declaration(ParseTree *node, string funcName, bool
         codePrinter.addCode(codePrinter.createCodeforParameter(newnode));
     }
 }
-ParseTree* Praser::praser_function_definition(ParseTree* funtion_def)
+ParseTree *Praser::praser_function_definition(ParseTree *funtion_def)
 {
-
 }
-ParseTree* Praser::praser_statement(ParseTree* statment)
+ParseTree *Praser::praser_statement(ParseTree *statment)
 {
-
 }
 void Praser::praser_expression_statement(ParseTree *node)
 {
@@ -388,7 +387,7 @@ void Praser::praser_iteration_statement(ParseTree *node)
 
         if (var.type == "bool")
         {
-            codePrinter.addCode("IF" + var.boolValue + "GOTO" + label1);
+            codePrinter.addCode("IF " + var.boolValue + " GOTO " + label1);
         }
         else
         {
@@ -397,9 +396,241 @@ void Praser::praser_iteration_statement(ParseTree *node)
             varNode newzonde = createTempVar(tempzeroname, "int");
             codePrinter.addCode(tempzeroname + " := #0");
 
-            codePrinter.addCode("IF" + codePrinter.getNodeName(var) + "!=" + tempzeroname + "GOTO" + label2);
+            codePrinter.addCode("IF " + codePrinter.getNodeName(var) + " != " + tempzeroname + " GOTO " + label2);
         }
-        codePrinter.addCode("GOTO" + label1);
+        codePrinter.addCode("GOTO " + label1);
+
+        blockStack.pop_back();
+    }
+    else if (node->child->name == "for")
+    {
+        if (node->child->next_sibling->next_sibling->name == "expression_statement")
+        {
+            if (node->child->next_sibling->next_sibling->next_sibling->next_sibling->name == ")")
+            {
+                block newblock;
+                newblock.breakable = true;
+                blockStack.push_back(newblock);
+
+                ParseTree *exp_state1 = node->child->next_sibling->next_sibling;
+                ParseTree *exp_state2 = exp_state1->next_sibling;
+                ParseTree *statement = exp_state2->next_sibling->next_sibling;
+
+                string label1 = codePrinter.getLabelName();
+                string label2 = codePrinter.getLabelName();
+                string label3 = codePrinter.getLabelName();
+
+                blockStack.back().gotoLabel = label3;
+
+                if (exp_state1->child->name == "expression")
+                {
+                    praser_expression(exp_state1->child);
+                }
+                codePrinter.addCode("LABEL " + label1 + " :");
+
+                varNode var;
+                if (exp_state2->child->name == "expression")
+                {
+                    var = praser_expression(exp_state2->child);
+                    if (var.type == "bool")
+                    {
+                        codePrinter.addCode("IF " + var.boolValue + " GOTO " + label2);
+                    }
+                    else
+                    {
+                        string tempzeroname = "temp" + to_string(codePrinter.temp_var_count);
+                        ++codePrinter.temp_var_count;
+                        varNode newznode = createTempVar(tempzeroname, "int");
+                        codePrinter.addCode(tempzeroname + " := #0");
+
+                        codePrinter.addCode("IF " + codePrinter.getNodeName(var) + " != " + tempzeroname + " GOTO " + label2);
+                    }
+                }
+                else
+                {
+                    codePrinter.addCode("GOTO " + label2);
+                }
+
+                codePrinter.addCode("GOTO " + label3);
+                codePrinter.addCode("LABEL " + label2 + ":");
+
+                praser_statement(statement);
+
+                codePrinter.addCode("GOTO " + label1);
+                codePrinter.addCode("LABEL " + label3 + ":");
+
+                blockStack.pop_back();
+            }
+            else if (node->child->next_sibling->next_sibling->next_sibling->next_sibling->name == "expression")
+            {
+                block newblock;
+                newblock.breakable = true;
+                blockStack.push_back(newblock);
+
+                ParseTree *exp_state1 = node->child->next_sibling->next_sibling;
+                ParseTree *exp_state2 = exp_state1->next_sibling;
+                ParseTree *exp = exp_state2->next_sibling;
+                ParseTree *statement = exp->next_sibling->next_sibling;
+
+                string label1 = codePrinter.getLabelName();
+                string label2 = codePrinter.getLabelName();
+                string label3 = codePrinter.getLabelName();
+
+                blockStack.back().gotoLabel = label3;
+
+                if (exp_state1->child->name == "expression")
+                {
+                    praser_statement(exp_state1->child);
+                }
+                codePrinter.addCode("LABEL " + label1 + ":");
+
+                varNode var;
+                if (exp_state2->child->name == "expression")
+                {
+                    var = praser_expression(exp_state2->child);
+                    if (var.type == "bool")
+                    {
+                        codePrinter.addCode("IF " + var.boolValue + " GOTO " + label2);
+                    }
+                    else
+                    {
+                        string tempzeroname = "temp" + to_string(codePrinter.temp_var_count);
+                        ++codePrinter.temp_var_count;
+                        varNode newznode = createTempVar(tempzeroname, "int");
+                        codePrinter.addCode(tempzeroname + " := #0");
+
+                        codePrinter.addCode("IF " + codePrinter.getNodeName(var) + " != " + tempzeroname + " GOTO " + label2);
+                    }
+                }
+                else
+                {
+                    codePrinter.addCode("GOTO " + label2);
+                }
+
+                codePrinter.addCode("GOTO " + label3);
+                codePrinter.addCode("LABEL " + label2 + " :");
+
+                praser_statement(statement);
+
+                praser_expression(exp);
+
+                codePrinter.addCode("GOTO " + label1);
+                codePrinter.addCode("LABEL " + label3 + " :");
+
+                blockStack.pop_back();
+            }
+        }
+        if (node->child->next_sibling->next_sibling->name == "declaration")
+        {
+            if (node->child->next_sibling->next_sibling->next_sibling->next_sibling->name == ")")
+            {
+                block newblock;
+                newblock.breakable = true;
+                blockStack.push_back(newblock);
+
+                ParseTree *declaration = node->child->next_sibling->next_sibling;
+                ParseTree *expression_statement = declaration->next_sibling;
+                ParseTree *statement = expression_statement->next_sibling->next_sibling;
+
+                string label1 = codePrinter.getLabelName();
+                string label2 = codePrinter.getLabelName();
+                string label3 = codePrinter.getLabelName();
+
+                blockStack.back().gotoLabel = label3;
+
+                praser_declaration(declaration);
+                codePrinter.addCode("LABEL " + label1 + " :");
+
+                varNode var;
+                if (expression_statement->child->name == "expression")
+                {
+
+                    var = praser_expression(expression_statement->child);
+
+                    if (var.type == "bool")
+                    {
+                        codePrinter.addCode("IF " + var.boolValue + " GOTO " + label2);
+                    }
+                    else
+                    {
+                        string tempzeroname = "temp" + to_string(codePrinter.temp_var_count);
+                        ++codePrinter.temp_var_count;
+                        varNode newznode = createTempVar(tempzeroname, "int");
+                        codePrinter.addCode(tempzeroname + " := #0");
+
+                        codePrinter.addCode("IF " + codePrinter.getNodeName(var) + " != " + tempzeroname + " GOTO " + label2);
+                    }
+                }
+                else
+                {
+                    codePrinter.addCode("GOTO " + label2);
+                }
+                codePrinter.addCode("GOTO " + label3);
+                codePrinter.addCode("LABEL " + label2 + " :");
+
+                praser_statement(statement);
+
+                codePrinter.addCode("GOTO " + label1);
+                codePrinter.addCode("LABEL " + label3 + " :");
+
+                blockStack.pop_back();
+            }
+            else if (node->child->next_sibling->next_sibling->next_sibling->next_sibling->name == "expression")
+            {
+                block newblock;
+                newblock.breakable = true;
+                blockStack.push_back(newblock);
+
+                ParseTree *declaration = node->child->next_sibling->next_sibling;
+                ParseTree *expression_statement = declaration->next_sibling;
+                ParseTree *expression = expression_statement->next_sibling;
+                ParseTree *statement = expression->next_sibling->next_sibling;
+
+                string label1 = codePrinter.getLabelName();
+                string label2 = codePrinter.getLabelName();
+                string label3 = codePrinter.getLabelName();
+
+                blockStack.back().gotoLabel = label3;
+
+                praser_declaration(declaration);
+                codePrinter.addCode("LABEL " + label1 + " :");
+
+                varNode var;
+                if (expression_statement->child->name == "expression")
+                {
+                    var = praser_expression(expression_statement->child);
+
+                    if (var.type == "bool")
+                    {
+                        codePrinter.addCode("IF " + var.boolValue + " GOTO " + label2);
+                    }
+                    else
+                    {
+                        string tempzeroname = "temp" + to_string(codePrinter.temp_var_count);
+                        ++codePrinter.temp_var_count;
+                        varNode newznode = createTempVar(tempzeroname, "int");
+                        codePrinter.addCode(tempzeroname + " := #0");
+
+                        codePrinter.addCode("IF " + codePrinter.getNodeName(var) + " != " + tempzeroname + " GOTO " + label2);
+                    }
+                }
+                else
+                {
+                    codePrinter.addCode("GOTO " + label2);
+                }
+                codePrinter.addCode("GOTO " + label3);
+                codePrinter.addCode("LABEL " + label2 + " :");
+
+                praser_statement(statement);
+
+                praser_expression(expression);
+
+                codePrinter.addCode("GOTO " + label1);
+				codePrinter.addCode("LABEL " + label3 + " :");
+
+                blockStack.pop_back();
+            }
+        }
     }
 }
 
@@ -465,7 +696,6 @@ varNode Praser::praser_conditional_expression(ParseTree *conditional_exp)
         node2 = praser_expression(conditional_exp->child->next_sibling->next_sibling);
         node3 = praser_conditional_expression(conditional_exp->child->next_sibling->next_sibling->next_sibling->next_sibling);
     }
-    
 }
 varNode Praser::praser_logical_or_expression(ParseTree *logical_or_exp)
 {
@@ -826,7 +1056,7 @@ varNode Praser::praser_unary_expression(ParseTree *unary_exp)
             varNode newnode = createTempVar(tempname, returnNode.type);
             blockStack.back()._var_map.insert({tempname, newnode});
 
-             if (returnNode.type != "int" && returnNode.type != "long" && returnNode.type != "long long" && returnNode.type != "float" && returnNode.type != "double")
+            if (returnNode.type != "int" && returnNode.type != "long" && returnNode.type != "long long" && returnNode.type != "float" && returnNode.type != "double")
                 error(unary_exp->child->child->line, "operator '-' can only used to int or double");
 
             if (returnNode.useAddress)
@@ -987,62 +1217,62 @@ varNode Praser::praser_postfix_expression(ParseTree *postfix_exp)
     }
     return node1;
 }
-varNode Praser::praser_primary_expression(ParseTree* primary_exp)
+varNode Praser::praser_primary_expression(ParseTree *primary_exp)
 {
-    varNode returnNode; 
-    if (primary_exp->child->name == "IDENTIFIER") 
+    varNode returnNode;
+    if (primary_exp->child->name == "IDENTIFIER")
     {
-		string content = primary_exp->child->content;
-		returnNode = lookupNode(content);
-		if (returnNode.count < 0) 
+        string content = primary_exp->child->content;
+        returnNode = lookupNode(content);
+        if (returnNode.count < 0)
         {
-			error(primary_exp->child->line, "Undefined variable " + content);
-		}
-		return returnNode;
-	}
-	else if (primary_exp->child->name == "TRUE" || primary_exp->child->name == "FALSE") 
+            error(primary_exp->child->line, "Undefined variable " + content);
+        }
+        return returnNode;
+    }
+    else if (primary_exp->child->name == "TRUE" || primary_exp->child->name == "FALSE")
     {
-		string content = primary_exp->child->content;
-		string tempname = "temp" + to_string(codePrinter.temp_var_count);
-		codePrinter.temp_var_count++;
-		varNode newNode = createTempVar(tempname, "bool");
-		blockStack.back()._var_map.insert({ tempname,newNode });
-		if(primary_exp->child->name == "TRUE") 
-			codePrinter.addCode(tempname + " := #1");
-		else 
+        string content = primary_exp->child->content;
+        string tempname = "temp" + to_string(codePrinter.temp_var_count);
+        codePrinter.temp_var_count++;
+        varNode newNode = createTempVar(tempname, "bool");
+        blockStack.back()._var_map.insert({tempname, newNode});
+        if (primary_exp->child->name == "TRUE")
+            codePrinter.addCode(tempname + " := #1");
+        else
         {
-			codePrinter.addCode(tempname + " := #0");
-		}
-		return newNode;
-	}
-	else if (primary_exp->child->name == "CONSTANT_INT" || primary_exp->child->name == "CONSTANT_FLOAT" || primary_exp->child->name == "CONSTANT_CHAR") 
+            codePrinter.addCode(tempname + " := #0");
+        }
+        return newNode;
+    }
+    else if (primary_exp->child->name == "CONSTANT_INT" || primary_exp->child->name == "CONSTANT_FLOAT" || primary_exp->child->name == "CONSTANT_CHAR")
     {
-		string content = primary_exp->child->content;
-		string tempname = "temp" + to_string(codePrinter.temp_var_count);
-		codePrinter.temp_var_count++;
+        string content = primary_exp->child->content;
+        string tempname = "temp" + to_string(codePrinter.temp_var_count);
+        codePrinter.temp_var_count++;
         string temptype = primary_exp->child->name.substr(9);
         transform(temptype.begin(), temptype.end(), temptype.begin(), ::tolower);
-		varNode newNode = createTempVar(tempname, temptype);
-		blockStack.back()._var_map.insert({tempname, newNode});
-		codePrinter.addCode(tempname + " := #"  + content);
-		return newNode;
-	}
+        varNode newNode = createTempVar(tempname, temptype);
+        blockStack.back()._var_map.insert({tempname, newNode});
+        codePrinter.addCode(tempname + " := #" + content);
+        return newNode;
+    }
     else if (primary_exp->child->name == "STRING_LITERAL")
     {
         string content = primary_exp->child->content;
-		string tempname = "temp" + to_string(codePrinter.temp_var_count);
-		codePrinter.temp_var_count++;
+        string tempname = "temp" + to_string(codePrinter.temp_var_count);
+        codePrinter.temp_var_count++;
 
-		varNode newNode = createTempVar(tempname, "char");
+        varNode newNode = createTempVar(tempname, "char");
         newNode.useAddress = true;
-		blockStack.back()._var_map.insert({tempname, newNode});
-		codePrinter.addCode(tempname + " := #"  + content);
-		return newNode;
+        blockStack.back()._var_map.insert({tempname, newNode});
+        codePrinter.addCode(tempname + " := #" + content);
+        return newNode;
     }
-	else if (primary_exp->child->name == "(") 
+    else if (primary_exp->child->name == "(")
     {
-		return praser_expression(primary_exp->child->next_sibling);
-	}
+        return praser_expression(primary_exp->child->next_sibling);
+    }
 }
 void Praser::praser_argument_expression_list(ParseTree *argument_exp, string func_name)
 {
@@ -1075,9 +1305,9 @@ void Praser::praser_argument_expression_list(ParseTree *argument_exp, string fun
 varNode Praser::lookupNode(string nodename)
 {
     varNode returnNode;
-    for(int i = blockStack.size - 1;i >= 0;i--)
+    for (int i = blockStack.size() - 1; i >= 0; i--)
     {
-        if(blockStack[i]._var_map.find(nodename) != blockStack[i]._var_map.end())
+        if (blockStack[i]._var_map.find(nodename) != blockStack[i]._var_map.end())
         {
             return blockStack[i]._var_map[nodename];
         }
