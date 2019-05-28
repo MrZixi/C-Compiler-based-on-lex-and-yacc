@@ -16,6 +16,7 @@ void CodePrinter::addCode(string s)
 void CodePrinter::printCode()
 {
     CodeOptimizer code_optimizer(CodeList);
+    cout<<"optimizing"<<endl;
     CodeList = code_optimizer.getCodeList();
     ofstream out("IR.txt");
     for(string s:CodeList)

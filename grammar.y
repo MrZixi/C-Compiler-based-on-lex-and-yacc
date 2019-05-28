@@ -3,7 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 #include "parse_tree.h"
-
+#include "praser.h"
+#include "code_printer.h"
 using namespace std;
 
 extern char *yytext;
@@ -13,7 +14,6 @@ extern FILE * yyout;
 extern int yylineno;
 
 class ParseTree *root;
-
 int yylex(void);
 void yyerror(const char*); 
 %}
@@ -912,9 +912,9 @@ int main(int argc,char* argv[]) {
 	
 	yyparse();
 	printf("\n");
-
+    
     root->levalTrase();
-
+    Praser praser = Praser(root);
 	fclose(yyin);
 	return 0;
 }

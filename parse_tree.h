@@ -1,9 +1,11 @@
+#ifndef _PARSE_TREE_H_
+#define _PARSE_TREE_H_
 #include <iostream>
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstdarg>
 #include <string>
+#include <cstring>
 
 using namespace std;
 
@@ -28,3 +30,4 @@ public:
 };
 
 void eval(ParseTree* p,int level);
+#endif

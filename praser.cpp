@@ -4,35 +4,40 @@ Praser::Praser(ParseTree *root)
 {
     this->root = root;
     init();
+    cout<<"begin praser root"<<endl;
     praserParseTree(root);
+    cout<<"end praser root"<<endl;
+    codePrinter.printCode();
 }
 void Praser::init()
 {
     block first_block;
     blockStack.push_back(first_block);
-    op_math_map.insert("MUL_ASSIGN", "*");
-    op_math_map.insert("DIV_ASSIGN", "/");
-    op_math_map.insert("MOD_ASSIGN", "%");
-    op_math_map.insert("ADD_ASSIGN", "+");
-    op_math_map.insert("SUB_ASSIGN", "-");
-    op_math_map.insert("LEFT_ASSIGN", "<<");
-    op_math_map.insert("RIGHT_ASSIGN", ">>");
-    op_math_map.insert("AND_ASSIGN", "&");
-    op_math_map.insert("OR_ASSIGN", "|");
-    op_math_map.insert("XOR_ASSIGN", "^");
-    op_math_map.insert("GE_OP", ">=");
-    op_math_map.insert("LE_OP", "<=");
-    op_math_map.insert("<", "<");
-    op_math_map.insert(">", ">");
-    op_math_map.insert("LEFT_OP", "<<");
-    op_math_map.insert("RIGHT_OP", ">>");
-    op_math_map.insert("INC_OP", "++");
-    op_math_map.insert("DEC_OP", "--");
+    string st = "";
+    op_math_map.insert({"MUL_ASSIGN", "*"});
+    op_math_map.insert({"DIV_ASSIGN", "/"});
+    op_math_map.insert({"MOD_ASSIGN", "%"});
+    op_math_map.insert({"ADD_ASSIGN", "+"});
+    op_math_map.insert({"SUB_ASSIGN", "-"});
+    op_math_map.insert({"LEFT_ASSIGN", "<<"});
+    op_math_map.insert({"RIGHT_ASSIGN", ">>"});
+    op_math_map.insert({"AND_ASSIGN", "&"});
+    op_math_map.insert({"OR_ASSIGN", "|"});
+    op_math_map.insert({"XOR_ASSIGN", "^"});
+    op_math_map.insert({"GE_OP", ">="});
+    op_math_map.insert({"LE_OP", "<="});
+    op_math_map.insert({"<", "<"});
+    op_math_map.insert({">", ">"});
+    op_math_map.insert({"LEFT_OP", "<<"});
+    op_math_map.insert({"RIGHT_OP", ">>"});
+    op_math_map.insert({"INC_OP", "++"});
+    op_math_map.insert({"DEC_OP", "--"});
 }
 void Praser::praserParseTree(ParseTree *temp_node)
 {
     if (temp_node == NULL || temp_node->line < 0)
         return;
+        cout << temp_node->name <<endl;
     if (temp_node->name == "declaration")
     {
         temp_node = praser_declaration(temp_node);
@@ -45,8 +50,22 @@ void Praser::praserParseTree(ParseTree *temp_node)
     {
         temp_node = praser_statement(temp_node);
     }
-    praserParseTree(temp_node->child);
-    praserParseTree(temp_node->next_sibling);
+
+    if(temp_node != NULL)
+    {
+        cout<<"praser temp_node child"<<endl;
+        praserParseTree(temp_node->child);
+        ParseTree* temp = temp_node->child->next_sibling;
+        while(temp != NULL)
+        {
+             cout<<"praser temp_node sibling"<<endl;
+            praserParseTree(temp);
+            temp = temp->next_sibling;
+        }
+        praserParseTree(temp_node->next_sibling);
+            
+    }
+  
 }
 void Praser::praser_parameter_list(ParseTree *node, string funcName, bool definite)
 {
@@ -376,11 +395,109 @@ void Praser::praser_init_declarator(string vartype, ParseTree *node)
     }
 }
 
-ParseTree *Praser::praser_function_definition(ParseTree *funtion_def)
+ParseTree *Praser::praser_function_definition(ParseTree *function_def)
 {
+    ParseTree* type_specifier = function_def->child;
+	ParseTree* declarator;
+	ParseTree* compound_statement;
+
+	declarator = function_def->child->next_sibling;
+    compound_statement = function_def->child->next_sibling;
+
+	string funcType = type_specifier->child->content;
+	string funcName = declarator->child->child->content;
+
+
+	bool isdeclared = false;
+	funcNode declarFunc;
+	if (func_map.find(funcName) != func_map.end()) {
+		//repeated definition
+		if (func_map[funcName].is_defined) {
+			error(declarator->child->child->line, "Function " + funcName + " is duplicated definition.");
+		}
+		//函数事先声明过但是没有定义
+		else {
+			isdeclared = true;
+			//先删除掉函数池中的函数的声明
+			declarFunc = func_map[funcName];
+			func_map.erase(func_map.find(funcName));
+		}
+	}
+
+	//进入新的block
+	block funBlock;
+	funBlock.isFunc = true;
+	funBlock._func.name = funcName;
+	funBlock._func.return_type = funcType;
+	funBlock._func.is_defined = true;
+	//将函数记录在块内并添加到函数池
+	blockStack.push_back(funBlock);
+	func_map.insert({funcName, funBlock._func});
+
+	codePrinter.addCode("FUNCTION " + funcName + " :");
+
+	//获取函数形参列表
+	if(declarator->child->next_sibling->next_sibling->name == "parameter_list")
+		praser_parameter_list(declarator->child->next_sibling->next_sibling, funcName, true);
+
+	//此时函数池中的func已经添加了参数列表
+	funcNode func = func_map[funcName];
+	//如果函数事先声明过，则比较函数的参数列表和返回类型
+	if (isdeclared) 
+    {
+		if (func.return_type != declarFunc.return_type) 
+        {
+			error(type_specifier->child->line, "Function return type doesn't equal to the function declared before.");
+		}
+		cout << funBlock._func.param_list.size() << endl;
+		if (func.param_list.size() != declarFunc.param_list.size()) 
+        {
+			error(declarator->child->next_sibling->next_sibling->line, "The number of function parameters doesn't equal to the function declared before.");
+		}
+		for (int i = 0; i < funBlock._func.param_list.size(); i++) 
+        {
+			if (func.param_list[i].type != declarFunc.param_list[i].type)
+				error(declarator->child->next_sibling->next_sibling->line, "The parameter " + funBlock._func.param_list[i].name + "'s type doesn't equal to the function declared before." );
+		}
+	}
+	//更新Block中func的参数列表
+	funBlock._func = func;
+	//分析函数的正文
+	praser_compound_statement(compound_statement);
+
+	//函数结束后，弹出相应的block
+	blockStack.pop_back();
+
+	return function_def->next_sibling;
 }
 ParseTree *Praser::praser_statement(ParseTree *statment)
 {
+    if (statment->child->name == "labeled_statement") 
+    {
+
+	}
+	if (statment->child->name == "compound_statement") 
+    {
+		praser_compound_statement(statment->child);
+	}
+	if (statment->child->name == "expression_statement") 
+    {
+		praser_expression_statement(statment->child);
+	}
+	if (statment->child->name == "selection_statement") 
+    {
+		praser_selection_statement(statment->child);
+	}
+	if (statment->child->name == "iteration_statement") 
+    {
+		praser_iteration_statement(statment->child);
+	}
+	if (statment->child->name == "jump_statement") 
+    {
+		praser_jump_statement(statment->child);
+	}
+
+	return statment->next_sibling;
 }
 void Praser::praser_expression_statement(ParseTree *node)
 {
@@ -1578,6 +1695,19 @@ int Praser::getBreakBlockNumber()
     return -1;
 }
 
+arrayNode Praser::getArrayNode(string nodename)
+{
+    arrayNode returnNode;
+    for (int i = blockStack.size() - 1; i >= 0; i--)
+    {
+        if (blockStack[i]._array_map.find(nodename) != blockStack[i]._array_map.end())
+        {
+            return blockStack[i]._array_map[nodename];
+        }
+    }
+    returnNode.count = -1;
+    return returnNode;
+}
 void Praser::error(int line_number, string err_message)
 {
     cout << "Error line:" << line_number << endl;

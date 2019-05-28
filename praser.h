@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 #include <set>
-#include <stack>
+#include <map>
 
 using namespace std;
 
@@ -65,12 +65,13 @@ class Praser{
         varNode createTempVar(string, string);
         void error(int, string);
 
+        arrayNode getArrayNode(string);
         int getBreakBlockNumber();
         string getFuncRType();
         
     public:
         Praser(ParseTree*);
-        ~Praser();
+        //~Praser();
 };
 
 #endif

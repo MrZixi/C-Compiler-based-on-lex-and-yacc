@@ -131,6 +131,7 @@ void ParseTree::levalTrase()
     //     }
     // }
     eval(this, 0);
+    cout << "successful Trase" <<endl;
 }
 
 void eval(ParseTree *p, int level)
@@ -150,4 +151,6 @@ void eval(ParseTree *p, int level)
         eval(p->child, level + 1);
         eval(p->next_sibling, level);
     }
+    /*if(level == 0)
+    cout << "eval out" <<endl;*/
 }
