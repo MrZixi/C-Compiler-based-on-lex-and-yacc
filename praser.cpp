@@ -4,9 +4,9 @@ Praser::Praser(ParseTree *root)
 {
     this->root = root;
     init();
-    cout<<"begin praser root"<<endl;
+    cout << "begin praser root" << endl;
     praserParseTree(root);
-    cout<<"end praser root"<<endl;
+    cout << "end praser root" << endl;
     codePrinter.printCode();
 }
 void Praser::init()
@@ -37,7 +37,7 @@ void Praser::praserParseTree(ParseTree *temp_node)
 {
     if (temp_node == NULL || temp_node->line < 0)
         return;
-    cout << temp_node->name <<endl;
+    cout << temp_node->name << endl;
     if (temp_node->name == "declaration")
     {
         temp_node = praser_declaration(temp_node);
@@ -51,21 +51,19 @@ void Praser::praserParseTree(ParseTree *temp_node)
         temp_node = praser_statement(temp_node);
     }
 
-    if(temp_node != NULL)
+    if (temp_node != NULL)
     {
-        cout<<"praser temp_node child"<<endl;
+        cout << "praser temp_node child" << endl;
         praserParseTree(temp_node->child);
-        ParseTree* temp = temp_node->next_sibling;
-        while(temp != NULL)
+        ParseTree *temp = temp_node->next_sibling;
+        while (temp != NULL)
         {
-             cout<<"praser temp_node sibling"<<endl;
+            cout << "praser temp_node sibling" << endl;
             praserParseTree(temp);
             temp = temp->next_sibling;
         }
         //praserParseTree(temp_node->next_sibling);
-            
     }
-  
 }
 void Praser::praser_parameter_list(ParseTree *node, string funcName, bool definite)
 {
@@ -94,9 +92,11 @@ void Praser::praser_parameter_declaration(ParseTree *node, string funcName, bool
     string varName;
     bool isConst = false;
     bool isAddress = false;
-    if (type_specifer_or_quality->name == "type_specifer")
+    cout << type_specifer_or_quality->name<<endl;
+    if (type_specifer_or_quality->name == "type_specifier")
     {
-        typeName = type_specifer_or_quality->content;
+        typeName = type_specifer_or_quality->child->content;
+        cout << typeName<<endl;
         if (typeName == "void")
         {
             cout << "Error line:" << type_specifer_or_quality->line << ",void can't definite parameter" << endl;
@@ -232,12 +232,12 @@ void Praser::praser_init_declarator(string vartype, ParseTree *node)
             //id
             if (direct_declarator->child->name == "IDENTIFIER")
             {
-                 
+
                 ParseTree *id = direct_declarator->child;
                 string var = id->content;
                 if (!lookup_var_in_current_block(var))
                 {
-                    
+
                     varNode newvar;
                     newvar.name = var;
                     newvar.type = vartype;
@@ -256,11 +256,13 @@ void Praser::praser_init_declarator(string vartype, ParseTree *node)
                 {
                     string funcName = direct_declarator->child->child->content;
                     string funcType = vartype;
+                    //cout <<"Xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"<<endl;
                     if (blockStack.size() > 1)
                     {
                         error(direct_declarator->line, "Function declaration must at global environment.");
                     }
                     ParseTree *parameter_list = direct_declarator->child->next_sibling->next_sibling;
+                    //cout << "xxxxxxxxxxxxxxxxxxxxxxx:" + parameter_list->name << endl;
                     funcNode newFunc;
                     newFunc.is_defined = false;
                     newFunc.name = funcName;
@@ -357,7 +359,7 @@ void Praser::praser_init_declarator(string vartype, ParseTree *node)
             {
                 ParseTree *id = direct_declarator->child;
                 string var = id->content;
-                
+
                 if (!lookup_var_in_current_block(var))
                 {
                     newvar.name = var;
@@ -373,7 +375,7 @@ void Praser::praser_init_declarator(string vartype, ParseTree *node)
             }
 
             ParseTree *initializer = declarator->next_sibling->next_sibling;
-        
+
             if (initializer == NULL)
             {
                 error(declarator->line, "Lack the initializer for variable.");
@@ -402,118 +404,116 @@ void Praser::praser_init_declarator(string vartype, ParseTree *node)
 
 ParseTree *Praser::praser_function_definition(ParseTree *function_def)
 {
-    ParseTree* type_specifier = function_def->child;
-	ParseTree* declarator;
-	ParseTree* compound_statement;
+    ParseTree *type_specifier = function_def->child;
+    ParseTree *declarator;
+    ParseTree *compound_statement;
 
-	declarator = function_def->child->next_sibling;
+    declarator = function_def->child->next_sibling;
     compound_statement = function_def->child->next_sibling;
 
-	string funcType = type_specifier->child->content;
-	string funcName = declarator->child->child->content;
+    string funcType = type_specifier->child->content;
+    string funcName = declarator->child->child->content;
 
-
-	bool isdeclared = false;
-	funcNode declarFunc;
-	if (func_map.find(funcName) != func_map.end()) {
-		//repeated definition
-		if (func_map[funcName].is_defined) {
-			error(declarator->child->child->line, "Function " + funcName + " is duplicated definition.");
-		}
-		//函数事先声明过但是没有定义
-		else {
-			isdeclared = true;
-			//先删除掉函数池中的函数的声明
-			declarFunc = func_map[funcName];
-			func_map.erase(func_map.find(funcName));
-		}
-	}
-
-	//进入新的block
-	block funBlock;
-	funBlock.isFunc = true;
-	funBlock._func.name = funcName;
-	funBlock._func.return_type = funcType;
-	funBlock._func.is_defined = true;
-	//将函数记录在块内并添加到函数池
-	blockStack.push_back(funBlock);
-	func_map.insert({funcName, funBlock._func});
-
-	codePrinter.addCode("FUNCTION " + funcName + " :");
-    
-	//获取函数形参列表
-    if(declarator->child->child->name == "direct_declarator")
+    bool isdeclared = false;
+    funcNode declarFunc;
+    if (func_map.find(funcName) != func_map.end())
     {
-         if(declarator->child->child->next_sibling->next_sibling->name == ")")
-         {
+        //repeated definition
+        if (func_map[funcName].is_defined)
+        {
+            error(declarator->child->child->line, "Function " + funcName + " is duplicated definition.");
+        }
+        //函数事先声明过但是没有定义
+        else
+        {
+            isdeclared = true;
+            //先删除掉函数池中的函数的声明
+            declarFunc = func_map[funcName];
+            func_map.erase(func_map.find(funcName));
+        }
+    }
 
-         }
-        else if(declarator->child->child->next_sibling->next_sibling->child->name == "parameter_list")
+    //进入新的block
+    block funBlock;
+    funBlock.isFunc = true;
+    funBlock._func.name = funcName;
+    funBlock._func.return_type = funcType;
+    funBlock._func.is_defined = true;
+    //将函数记录在块内并添加到函数池
+    blockStack.push_back(funBlock);
+    func_map.insert({funcName, funBlock._func});
+
+    codePrinter.addCode("FUNCTION " + funcName + " :");
+
+    //获取函数形参列表
+    if (declarator->child->child->name == "direct_declarator")
+    {
+        if (declarator->child->child->next_sibling->next_sibling->name == ")")
+        {
+        }
+        else if (declarator->child->child->next_sibling->next_sibling->child->name == "parameter_list")
         {
             praser_parameter_list(declarator->child->child->next_sibling->next_sibling->child, funcName, true);
         }
-           
     }
-	
 
-	//此时函数池中的func已经添加了参数列表
-	funcNode func = func_map[funcName];
-	//如果函数事先声明过，则比较函数的参数列表和返回类型
-	if (isdeclared) 
+    //此时函数池中的func已经添加了参数列表
+    funcNode func = func_map[funcName];
+    //如果函数事先声明过，则比较函数的参数列表和返回类型
+    if (isdeclared)
     {
-		if (func.return_type != declarFunc.return_type) 
+        if (func.return_type != declarFunc.return_type)
         {
-			error(type_specifier->child->line, "Function return type doesn't equal to the function declared before.");
-		}
-		cout << funBlock._func.param_list.size() << endl;
-		if (func.param_list.size() != declarFunc.param_list.size()) 
+            error(type_specifier->child->line, "Function return type doesn't equal to the function declared before.");
+        }
+        cout << funBlock._func.param_list.size() << endl;
+        if (func.param_list.size() != declarFunc.param_list.size())
         {
-			error(declarator->child->next_sibling->next_sibling->line, "The number of function parameters doesn't equal to the function declared before.");
-		}
-		for (int i = 0; i < funBlock._func.param_list.size(); i++) 
+            error(declarator->child->next_sibling->next_sibling->line, "The number of function parameters doesn't equal to the function declared before.");
+        }
+        for (int i = 0; i < funBlock._func.param_list.size(); i++)
         {
-			if (func.param_list[i].type != declarFunc.param_list[i].type)
-				error(declarator->child->next_sibling->next_sibling->line, "The parameter " + funBlock._func.param_list[i].name + "'s type doesn't equal to the function declared before." );
-		}
-	}
-	//更新Block中func的参数列表
-	funBlock._func = func;
-	//分析函数的正文
-	praser_compound_statement(compound_statement);
+            if (func.param_list[i].type != declarFunc.param_list[i].type)
+                error(declarator->child->next_sibling->next_sibling->line, "The parameter " + funBlock._func.param_list[i].name + "'s type doesn't equal to the function declared before.");
+        }
+    }
+    //更新Block中func的参数列表
+    funBlock._func = func;
+    //分析函数的正文
+    praser_compound_statement(compound_statement);
 
-	//函数结束后，弹出相应的block
-	blockStack.pop_back();
+    //函数结束后，弹出相应的block
+    blockStack.pop_back();
 
-	return function_def->next_sibling;
+    return function_def->next_sibling;
 }
 ParseTree *Praser::praser_statement(ParseTree *statment)
 {
-    if (statment->child->name == "labeled_statement") 
+    if (statment->child->name == "labeled_statement")
     {
+    }
+    if (statment->child->name == "compound_statement")
+    {
+        praser_compound_statement(statment->child);
+    }
+    if (statment->child->name == "expression_statement")
+    {
+        praser_expression_statement(statment->child);
+    }
+    if (statment->child->name == "selection_statement")
+    {
+        praser_selection_statement(statment->child);
+    }
+    if (statment->child->name == "iteration_statement")
+    {
+        praser_iteration_statement(statment->child);
+    }
+    if (statment->child->name == "jump_statement")
+    {
+        praser_jump_statement(statment->child);
+    }
 
-	}
-	if (statment->child->name == "compound_statement") 
-    {
-		praser_compound_statement(statment->child);
-	}
-	if (statment->child->name == "expression_statement") 
-    {
-		praser_expression_statement(statment->child);
-	}
-	if (statment->child->name == "selection_statement") 
-    {
-		praser_selection_statement(statment->child);
-	}
-	if (statment->child->name == "iteration_statement") 
-    {
-		praser_iteration_statement(statment->child);
-	}
-	if (statment->child->name == "jump_statement") 
-    {
-		praser_jump_statement(statment->child);
-	}
-
-	return statment->next_sibling;
+    return statment->next_sibling;
 }
 void Praser::praser_expression_statement(ParseTree *node)
 {
@@ -996,14 +996,17 @@ void Praser::praser_iteration_statement(ParseTree *node)
 varNode Praser::praser_assignment_expression(ParseTree *assign_exp)
 {
     varNode node1, node2, node3;
+    cout << "here1"<<endl;
+    cout<<assign_exp->name<<endl;
     if (assign_exp->child->name == "conditional_expression")
     {
+        cout << "here2"<<endl;
         return praser_conditional_expression(assign_exp->child);
     }
     //Truely is assignment expression
     else if (assign_exp->child->name == "unary_expression")
     {
-         
+        cout << "here3"<<endl;
         ParseTree *unary_exp = assign_exp->child;
         string op = assign_exp->child->next_sibling->child->name;
         ParseTree *next_assign_exp = assign_exp->child->next_sibling->next_sibling;
@@ -1041,6 +1044,7 @@ varNode Praser::praser_assignment_expression(ParseTree *assign_exp)
         codePrinter.addCode(codePrinter.createCodeforAssign(node1, node3));
         return node1;
     }
+    cout << "here4"<<endl;
     return node1;
 }
 varNode Praser::praser_conditional_expression(ParseTree *conditional_exp)
@@ -1048,10 +1052,12 @@ varNode Praser::praser_conditional_expression(ParseTree *conditional_exp)
     varNode node1, node2, node3;
     if (conditional_exp->child->next_sibling == NULL)
     {
+        //cout <<"dead1"<<endl;
         return praser_logical_or_expression(conditional_exp->child);
     }
     else
     {
+        //cout <<"dead2"<<endl;
         node1 = praser_logical_or_expression(conditional_exp->child);
         node2 = praser_expression(conditional_exp->child->next_sibling->next_sibling);
         node3 = praser_conditional_expression(conditional_exp->child->next_sibling->next_sibling->next_sibling->next_sibling);
@@ -1513,6 +1519,7 @@ varNode Praser::praser_postfix_expression(ParseTree *postfix_exp)
             error(postfix_exp->child->child->child->line, "Undefined function " + funcName);
         }
 
+        cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!?????????????" << endl;
         if (postfix_exp->child->next_sibling->next_sibling->name == "argument_expression_list")
         {
             //function call with params
@@ -1635,23 +1642,24 @@ varNode Praser::praser_primary_expression(ParseTree *primary_exp)
 }
 void Praser::praser_argument_expression_list(ParseTree *argument_exp, string func_name)
 {
-    ParseTree* temp = argument_exp;
+    ParseTree *temp = argument_exp->child;
     funcNode func = func_map[func_name];
     int count = 0;
 
     while (temp->name == "argument_expression_list" && temp->next_sibling != NULL)
     {
-        
+        cout <<"1231232132" <<endl;
+        cout<<temp->name<<endl;
+        cout<<temp->next_sibling->name<<endl;
         varNode arg = praser_assignment_expression(temp->next_sibling->next_sibling);
         codePrinter.addCode(codePrinter.createCodeforArgument(arg));
         count++;
-        cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<temp->name<<endl;
+        cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << temp->name << endl;
         if (func.param_list[func.param_list.size() - count].type != arg.type)
         {
             error(temp->line, "Wrong type arguments to function " + func_name);
-        }        
+        }
         temp = temp->child;
-        
     }
     varNode arg = praser_assignment_expression(temp);
     codePrinter.addCode(codePrinter.createCodeforArgument(arg));
