@@ -465,7 +465,6 @@ ParseTree *Praser::praser_function_definition(ParseTree *function_def)
         {
 			error(type_specifier->child->line, "Function return type doesn't equal to the function declared before.");
 		}
-		cout << funBlock._func.param_list.size() << endl;
 		if (func.param_list.size() != declarFunc.param_list.size()) 
         {
 			error(declarator->child->next_sibling->next_sibling->line, "The number of function parameters doesn't equal to the function declared before.");
@@ -1635,17 +1634,16 @@ varNode Praser::praser_primary_expression(ParseTree *primary_exp)
 }
 void Praser::praser_argument_expression_list(ParseTree *argument_exp, string func_name)
 {
-    ParseTree* temp = argument_exp;
+    ParseTree* temp = argument_exp->child;
     funcNode func = func_map[func_name];
     int count = 0;
 
-    while (temp->name == "argument_expression_list" && temp->next_sibling != NULL)
+    while (temp->name == "argument_expression_list" && temp->next_sibling->next_sibling != NULL)
     {
-        
         varNode arg = praser_assignment_expression(temp->next_sibling->next_sibling);
         codePrinter.addCode(codePrinter.createCodeforArgument(arg));
         count++;
-        cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<temp->name<<endl;
+     cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<func.param_list[0].type<<endl;
         if (func.param_list[func.param_list.size() - count].type != arg.type)
         {
             error(temp->line, "Wrong type arguments to function " + func_name);
@@ -1661,7 +1659,7 @@ void Praser::praser_argument_expression_list(ParseTree *argument_exp, string fun
         error(argument_exp->line, "Wrong type arguments to function " + func_name);
     }
     if (count != func.param_list.size())
-    {
+    {           
         error(argument_exp->line, "The number of arguments doesn't equal to the function parameters number in " + func_name + ".");
     }
 }
