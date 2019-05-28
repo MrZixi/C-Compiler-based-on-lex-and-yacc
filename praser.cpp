@@ -94,9 +94,10 @@ void Praser::praser_parameter_declaration(ParseTree *node, string funcName, bool
     string varName;
     bool isConst = false;
     bool isAddress = false;
-    if (type_specifer_or_quality->name == "type_specifer")
+
+    if (type_specifer_or_quality->name == "type_specifier")
     {
-        typeName = type_specifer_or_quality->content;
+        typeName = type_specifer_or_quality->child->content;
         if (typeName == "void")
         {
             cout << "Error line:" << type_specifer_or_quality->line << ",void can't definite parameter" << endl;
@@ -104,7 +105,7 @@ void Praser::praser_parameter_declaration(ParseTree *node, string funcName, bool
     }
     else if (type_specifer_or_quality->name == "type_quality")
     {
-        string quality = type_specifer_or_quality->name;
+        string quality = type_specifer_or_quality->child->name;
         if (quality == "const")
         {
             isConst = true;
