@@ -37,7 +37,7 @@ void Praser::praserParseTree(ParseTree *temp_node)
 {
     if (temp_node == NULL || temp_node->line < 0)
         return;
-        cout << temp_node->name <<endl;
+    cout << temp_node->name <<endl;
     if (temp_node->name == "declaration")
     {
         temp_node = praser_declaration(temp_node);
@@ -55,14 +55,14 @@ void Praser::praserParseTree(ParseTree *temp_node)
     {
         cout<<"praser temp_node child"<<endl;
         praserParseTree(temp_node->child);
-        ParseTree* temp = temp_node->child->next_sibling;
+        ParseTree* temp = temp_node->next_sibling;
         while(temp != NULL)
         {
              cout<<"praser temp_node sibling"<<endl;
             praserParseTree(temp);
             temp = temp->next_sibling;
         }
-        praserParseTree(temp_node->next_sibling);
+        //praserParseTree(temp_node->next_sibling);
             
     }
   
@@ -232,10 +232,12 @@ void Praser::praser_init_declarator(string vartype, ParseTree *node)
             //id
             if (direct_declarator->child->name == "IDENTIFIER")
             {
+                 
                 ParseTree *id = direct_declarator->child;
                 string var = id->content;
                 if (!lookup_var_in_current_block(var))
                 {
+                    
                     varNode newvar;
                     newvar.name = var;
                     newvar.type = vartype;
@@ -355,11 +357,13 @@ void Praser::praser_init_declarator(string vartype, ParseTree *node)
             {
                 ParseTree *id = direct_declarator->child;
                 string var = id->content;
+                
                 if (!lookup_var_in_current_block(var))
                 {
                     newvar.name = var;
                     newvar.type = vartype;
                     newvar.count = codePrinter.var_count;
+                    codePrinter.var_count++;
                     blockStack.back()._var_map.insert({var, newvar});
                 }
                 else
@@ -368,7 +372,8 @@ void Praser::praser_init_declarator(string vartype, ParseTree *node)
                 }
             }
 
-            ParseTree *initializer = direct_declarator->next_sibling->next_sibling;
+            ParseTree *initializer = declarator->next_sibling->next_sibling;
+        
             if (initializer == NULL)
             {
                 error(declarator->line, "Lack the initializer for variable.");
@@ -987,6 +992,7 @@ varNode Praser::praser_assignment_expression(ParseTree *assign_exp)
     //Truely is assignment expression
     else if (assign_exp->child->name == "unary_expression")
     {
+         
         ParseTree *unary_exp = assign_exp->child;
         string op = assign_exp->child->next_sibling->child->name;
         ParseTree *next_assign_exp = assign_exp->child->next_sibling->next_sibling;
@@ -1180,7 +1186,7 @@ varNode Praser::praser_equality_expression(ParseTree *equal_exp)
     varNode node1, node2;
     if (equal_exp->child->name == "relational_expression")
     {
-        return praser_equality_expression(equal_exp->child);
+        return praser_relational_expression(equal_exp->child);
     }
     else
     {

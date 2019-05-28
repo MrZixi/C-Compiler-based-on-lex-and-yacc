@@ -1,5 +1,6 @@
 #include "code_optimizer.h"
 #include<set>
+#include <iostream>
 CodeOptimizer::CodeOptimizer(vector<string> codeList)
 {
     establishTempMap(codeList);
@@ -21,7 +22,7 @@ void CodeOptimizer::establishTempMap(vector<string>& codeList)
         string temp_code = codeList[i];
         int begin_pos = 0;
         int begin = temp_code.find("temp", begin_pos);
-     
+        
         while(begin != string::npos)
         {
             int end = temp_code.find(" ", begin);
@@ -34,6 +35,7 @@ void CodeOptimizer::establishTempMap(vector<string>& codeList)
                     tempMap[temp_name].num += 2;
                 }
                 tempMap[temp_name].num++;
+                cout<<temp_name<<" "<<tempMap[temp_name].num<<endl;
             }
             else
             {
@@ -41,10 +43,11 @@ void CodeOptimizer::establishTempMap(vector<string>& codeList)
                 message.line = i;
                 message.num = 1;
                 tempMap.insert({temp_name, message});
+                cout<<temp_name<<endl;
             }
 
             begin = end;
-            begin_pos = temp_code.find("temp", begin);
+            begin = temp_code.find("temp", begin);
         }
 
     }
@@ -64,6 +67,8 @@ void CodeOptimizer::dropTemp(vector<string>& codeList)
         if(dropLine.find(i) == dropLine.end())
         {
             this->codeList.push_back(codeList[i]);
+            cout<<endl;
+            cout<<"last:"<<codeList[i]<<endl;
         }
     }
 }

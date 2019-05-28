@@ -16,6 +16,7 @@ class CodePrinter
         int temp_var_count, array_count, var_count, label_count;
 
         CodePrinter();
+        ~CodePrinter();
         void printCode();
         void addCode(string);
 

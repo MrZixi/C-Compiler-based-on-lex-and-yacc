@@ -7,7 +7,10 @@ CodePrinter::CodePrinter()
     var_count = 0;
     label_count = 0;
 }
-
+CodePrinter::~CodePrinter()
+{
+    printCode();
+}
 void CodePrinter::addCode(string s)
 {
     CodeList.push_back(s);
@@ -15,8 +18,13 @@ void CodePrinter::addCode(string s)
 
 void CodePrinter::printCode()
 {
+    for(string s:CodeList)
+    {
+        cout<<s<<endl;
+    }
+    cout<<endl;
     CodeOptimizer code_optimizer(CodeList);
-    cout<<"optimizing"<<endl;
+   
     CodeList = code_optimizer.getCodeList();
     ofstream out("IR.txt");
     for(string s:CodeList)
