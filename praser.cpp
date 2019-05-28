@@ -69,6 +69,7 @@ void Praser::praserParseTree(ParseTree *temp_node)
 }
 void Praser::praser_parameter_list(ParseTree *node, string funcName, bool definite)
 {
+    cout<<"func"<<endl;
     if (node->child->name == "parameter_list")
     {
         praser_parameter_list(node->child, funcName, definite);
@@ -440,10 +441,21 @@ ParseTree *Praser::praser_function_definition(ParseTree *function_def)
 	func_map.insert({funcName, funBlock._func});
 
 	codePrinter.addCode("FUNCTION " + funcName + " :");
-
+    
 	//获取函数形参列表
-	if(declarator->child->next_sibling->next_sibling->name == "parameter_list")
-		praser_parameter_list(declarator->child->next_sibling->next_sibling, funcName, true);
+    if(declarator->child->child->name == "direct_declarator")
+    {
+        if(declarator->child->child->child->name == "IDENTIFIER")
+        {
+
+        }
+        else if(declarator->child->child->next_sibling->next_sibling->child->name == "parameter_type_list")
+        {
+            praser_parameter_list(declarator->child->child->next_sibling->next_sibling->child, funcName, true);
+        }
+           
+    }
+	
 
 	//此时函数池中的func已经添加了参数列表
 	funcNode func = func_map[funcName];
@@ -468,6 +480,7 @@ ParseTree *Praser::praser_function_definition(ParseTree *function_def)
 	//更新Block中func的参数列表
 	funBlock._func = func;
 	//分析函数的正文
+    cout<<"func"<<endl;
 	praser_compound_statement(compound_statement);
 
 	//函数结束后，弹出相应的block
@@ -1439,7 +1452,6 @@ varNode Praser::praser_postfix_expression(ParseTree *postfix_exp)
     {
         return praser_primary_expression(postfix_exp->child);
     }
-    node1 = praser_postfix_expression(postfix_exp->child);
 
     if (postfix_exp->child->next_sibling->name == "[")
     {
