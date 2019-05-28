@@ -1,10 +1,10 @@
-int p(int a)
+int p(int a, int b, int c)
 {
-	return a;
+	return 3;
 }
 int main()
 {
    int a = 2;
-   int b = p(3);
+   int b = p(3, 3, 3);
    if(a < b) b = a;
 }

@@ -69,7 +69,6 @@ void Praser::praserParseTree(ParseTree *temp_node)
 }
 void Praser::praser_parameter_list(ParseTree *node, string funcName, bool definite)
 {
-    cout<<"func"<<endl;
     if (node->child->name == "parameter_list")
     {
         praser_parameter_list(node->child, funcName, definite);
@@ -79,7 +78,7 @@ void Praser::praser_parameter_list(ParseTree *node, string funcName, bool defini
         praser_parameter_declaration(node->child, funcName, definite);
     }
 
-    if (node->next_sibling->name == ",")
+    if (node->next_sibling != NULL && node->next_sibling->name == ",")
     {
         praser_parameter_declaration(node->next_sibling->next_sibling, funcName, definite);
     }
@@ -445,11 +444,11 @@ ParseTree *Praser::praser_function_definition(ParseTree *function_def)
 	//获取函数形参列表
     if(declarator->child->child->name == "direct_declarator")
     {
-        if(declarator->child->child->child->name == "IDENTIFIER")
-        {
+         if(declarator->child->child->next_sibling->next_sibling->name == ")")
+         {
 
-        }
-        else if(declarator->child->child->next_sibling->next_sibling->child->name == "parameter_type_list")
+         }
+        else if(declarator->child->child->next_sibling->next_sibling->child->name == "parameter_list")
         {
             praser_parameter_list(declarator->child->child->next_sibling->next_sibling->child, funcName, true);
         }
@@ -480,7 +479,6 @@ ParseTree *Praser::praser_function_definition(ParseTree *function_def)
 	//更新Block中func的参数列表
 	funBlock._func = func;
 	//分析函数的正文
-    cout<<"func"<<endl;
 	praser_compound_statement(compound_statement);
 
 	//函数结束后，弹出相应的block
@@ -1637,30 +1635,34 @@ varNode Praser::praser_primary_expression(ParseTree *primary_exp)
 }
 void Praser::praser_argument_expression_list(ParseTree *argument_exp, string func_name)
 {
-    ParseTree *argument_list = argument_exp->child;
+    ParseTree* temp = argument_exp;
     funcNode func = func_map[func_name];
     int count = 0;
-    while (argument_list->name == "argument_expression_list")
+
+    while (temp->name == "argument_expression_list" && temp->next_sibling != NULL)
     {
-        varNode arg = praser_assignment_expression(argument_list->next_sibling->next_sibling);
-        argument_list = argument_list->child;
+        
+        varNode arg = praser_assignment_expression(temp->next_sibling->next_sibling);
         codePrinter.addCode(codePrinter.createCodeforArgument(arg));
         count++;
+        cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<temp->name<<endl;
         if (func.param_list[func.param_list.size() - count].type != arg.type)
         {
-            error(argument_list->line, "Wrong type arguments to function " + func_name);
-        }
+            error(temp->line, "Wrong type arguments to function " + func_name);
+        }        
+        temp = temp->child;
+        
     }
-    varNode arg = praser_assignment_expression(argument_list->next_sibling->next_sibling);
+    varNode arg = praser_assignment_expression(temp);
     codePrinter.addCode(codePrinter.createCodeforArgument(arg));
     count++;
     if (func.param_list[func.param_list.size() - count].type != arg.type)
     {
-        error(argument_list->line, "Wrong type arguments to function " + func_name);
+        error(argument_exp->line, "Wrong type arguments to function " + func_name);
     }
     if (count != func.param_list.size())
     {
-        error(argument_list->line, "The number of arguments doesn't equal to the function parameters number in " + func_name + ".");
+        error(argument_exp->line, "The number of arguments doesn't equal to the function parameters number in " + func_name + ".");
     }
 }
 varNode Praser::lookupNode(string nodename)

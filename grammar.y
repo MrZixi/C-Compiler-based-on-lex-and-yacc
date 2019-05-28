@@ -110,7 +110,7 @@ postfix_expression:
 
 argument_expression_list: 
     assignment_expression {
-        $$ = new ParseTree("argument_experssion_list", 1, $1);
+        $$ = new ParseTree("argument_expression_list", 1, $1);
     }
 	| argument_expression_list ',' assignment_expression {
         $$ = new ParseTree("argument_expression_list", 3, $1, $2 ,$3);
