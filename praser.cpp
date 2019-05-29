@@ -146,6 +146,14 @@ void Praser::praser_parameter_declaration(ParseTree *node, string funcName, bool
             cout << "Error line:" << type_specifer_or_quality->line << ",invalid parameter";
         }
         varName = direct_declarator->child->child->content;
+
+        arrayNode arrayNode;
+        arrayNode.name = varName;
+        arrayNode.global_or_local = false;
+        arrayNode.type = typeName;
+        arrayNode.count = codePrinter.array_count;
+        codePrinter.array_count++;
+        blockStack.back()._array_map.insert({varName, arrayNode});
     }
 
     varNode newnode;
@@ -216,7 +224,6 @@ void Praser::praser_init_declarator_list(string vartype, ParseTree *node)
 void Praser::praser_init_declarator(string vartype, ParseTree *node)
 {
     ParseTree *declarator = node->child;
-
     if (declarator->next_sibling == NULL)
     {
         ParseTree *direct_declarator = NULL;
@@ -236,7 +243,10 @@ void Praser::praser_init_declarator(string vartype, ParseTree *node)
                 string var = id->content;
                 if (!lookup_var_in_current_block(var))
                 {
+<<<<<<< HEAD
 
+=======
+>>>>>>> bd81c3d97a7c42927d09feff597fa34267174700
                     varNode newvar;
                     newvar.name = var;
                     newvar.type = vartype;
@@ -337,6 +347,13 @@ void Praser::praser_init_declarator(string vartype, ParseTree *node)
                     anode.count = codePrinter.array_count++;
                     codePrinter.addCode("DEC " + codePrinter.getarrayNodeName(anode) + " " + tnode.name);
 
+                    varNode vnode;
+                    vnode.name = arrayName;
+                    vnode.type = arrayType;
+                    vnode.useAddress = true;
+                    vnode.count = codePrinter.var_count++;
+
+                    blockStack.back()._var_map.insert({arrayName, vnode});
                     blockStack.back()._array_map.insert({arrayName, anode});
                 }
             }
@@ -1055,10 +1072,44 @@ varNode Praser::praser_conditional_expression(ParseTree *conditional_exp)
     }
     else
     {
+<<<<<<< HEAD
         //cout <<"dead2"<<endl;
+=======
+        block newblock;
+        blockStack.push_back(newblock);
+        
+>>>>>>> bd81c3d97a7c42927d09feff597fa34267174700
         node1 = praser_logical_or_expression(conditional_exp->child);
+        
+        string label1 = codePrinter.getLabelName();
+        string label2 = codePrinter.getLabelName();
+
+        if (node1.type == "bool")
+        {
+            codePrinter.addCode("IF " + node1.boolValue + " GOTO " + label1);
+        }
+        else
+        {
+            string tempzeroname = "temp" + to_string(codePrinter.temp_var_count);
+            ++codePrinter.temp_var_count;
+            varNode newznode = createTempVar(tempzeroname, "int");
+            codePrinter.addCode(tempzeroname + " := #0");
+
+            codePrinter.addCode("IF " + codePrinter.getNodeName(node1) + " != " + tempzeroname + " GOTO " + label1);
+        }
+
+        codePrinter.addCode("GOTO " + label2);
+        codePrinter.addCode("LABEL " + label1 + " :");
+
         node2 = praser_expression(conditional_exp->child->next_sibling->next_sibling);
+
+        codePrinter.addCode("LABEL " + label2 + " :");
+
         node3 = praser_conditional_expression(conditional_exp->child->next_sibling->next_sibling->next_sibling->next_sibling);
+        
+        blockStack.pop_back();
+
+        return node1;
     }
 }
 varNode Praser::praser_logical_or_expression(ParseTree *logical_or_exp)
@@ -1550,6 +1601,7 @@ varNode Praser::praser_postfix_expression(ParseTree *postfix_exp)
     else if (postfix_exp->child->next_sibling->name == "INC_OP" || postfix_exp->child->next_sibling->name == "DEC_OP")
     {
         string op = op_math_map[postfix_exp->child->next_sibling->name];
+        node1 = praser_postfix_expression(postfix_exp->child);
         if (node1.type != "int")
             error(postfix_exp->child->next_sibling->line, op + " operation can only use for int type.");
 
@@ -1588,6 +1640,7 @@ varNode Praser::praser_primary_expression(ParseTree *primary_exp)
     {
         string content = primary_exp->child->content;
         returnNode = lookupNode(content);
+      
         if (returnNode.count < 0)
         {
             error(primary_exp->child->line, "Undefined variable " + content);
@@ -1649,7 +1702,6 @@ void Praser::praser_argument_expression_list(ParseTree *argument_exp, string fun
         varNode arg = praser_assignment_expression(temp->next_sibling->next_sibling);
         codePrinter.addCode(codePrinter.createCodeforArgument(arg));
         count++;
-     cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<func.param_list[0].type<<endl;
         if (func.param_list[func.param_list.size() - count].type != arg.type)
         {
             error(temp->line, "Wrong type arguments to function " + func_name);

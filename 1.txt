@@ -1,8 +1,5 @@
-int p(int a,int b)
+int main()
 {
-	return 3;
-}
-
-int main(){
-   int c = p(1,2);
+   int i = 0, j = 3;
+   i > j ? (i = 1):(j = 2);
 }
