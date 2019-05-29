@@ -1,5 +1,1 @@
-void main(int a);
-void main(double b)
-{
-
-}
+int main();
