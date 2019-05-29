@@ -452,7 +452,6 @@ ParseTree *Praser::praser_function_definition(ParseTree *function_def)
 	//将函数记录在块内并添加到函数池
 	blockStack.push_back(funBlock);
 	func_map.insert({funcName, funBlock._func});
-
 	codePrinter.addCode("FUNCTION " + funcName + " :");
     
 	//获取函数形参列表
