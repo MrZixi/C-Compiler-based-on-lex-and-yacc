@@ -449,6 +449,7 @@ ParseTree *Praser::praser_function_definition(ParseTree *function_def)
         }
     }
 
+<<<<<<< HEAD
     //进入新的block
     block funBlock;
     funBlock.isFunc = true;
@@ -468,6 +469,43 @@ ParseTree *Praser::praser_function_definition(ParseTree *function_def)
         {
         }
         else if (declarator->child->child->next_sibling->next_sibling->child->name == "parameter_list")
+=======
+	bool isdeclared = false;
+	funcNode declarFunc;
+	if (func_map.find(funcName) != func_map.end()) {
+		//repeated definition
+		if (func_map[funcName].is_defined) {
+			error(declarator->child->child->line, "Function " + funcName + " is duplicated definition.");
+		}
+		//函数事先声明过但是没有定义
+		else {
+			isdeclared = true;
+			//先删除掉函数池中的函数的声明
+			declarFunc = func_map[funcName];
+			func_map.erase(func_map.find(funcName));
+		}
+	}
+
+	//进入新的block
+	block funBlock;
+	funBlock.isFunc = true;
+	funBlock._func.name = funcName;
+	funBlock._func.return_type = funcType;
+	funBlock._func.is_defined = true;
+	//将函数记录在块内并添加到函数池
+	blockStack.push_back(funBlock);
+	func_map.insert({funcName, funBlock._func});
+	codePrinter.addCode("FUNCTION " + funcName + " :");
+    
+	//获取函数形参列表
+    if(declarator->child->child->name == "direct_declarator")
+    {
+         if(declarator->child->child->next_sibling->next_sibling->name == ")")
+         {
+
+         }
+        else if(declarator->child->child->next_sibling->next_sibling->child->name == "parameter_list")
+>>>>>>> 24136af25b63a33fdcc4ac7dd683c3bf70e5b42c
         {
             praser_parameter_list(declarator->child->child->next_sibling->next_sibling->child, funcName, true);
         }

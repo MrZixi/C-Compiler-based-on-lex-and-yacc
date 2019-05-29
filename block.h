@@ -39,7 +39,7 @@ struct funcNode
 class block
 {
     public:
-        bool isFunc;            //if this block is a function
+        bool isFunc = false;            //if this block is a function
         funcNode _func;             //if so, funcNode of it
         map<string, struct varNode> _var_map;
         map<string, struct arrayNode> _array_map;
