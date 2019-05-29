@@ -1065,9 +1065,40 @@ varNode Praser::praser_conditional_expression(ParseTree *conditional_exp)
     }
     else
     {
+        block newblock;
+        blockStack.push_back(newblock);
+        
         node1 = praser_logical_or_expression(conditional_exp->child);
+        
+        string label1 = codePrinter.getLabelName();
+        string label2 = codePrinter.getLabelName();
+
+        if (node1.type == "bool")
+        {
+            codePrinter.addCode("IF " + node1.boolValue + " GOTO " + label1);
+        }
+        else
+        {
+            string tempzeroname = "temp" + to_string(codePrinter.temp_var_count);
+            ++codePrinter.temp_var_count;
+            varNode newznode = createTempVar(tempzeroname, "int");
+            codePrinter.addCode(tempzeroname + " := #0");
+
+            codePrinter.addCode("IF " + codePrinter.getNodeName(node1) + " != " + tempzeroname + " GOTO " + label1);
+        }
+
+        codePrinter.addCode("GOTO " + label2);
+        codePrinter.addCode("LABEL " + label1 + " :");
+
         node2 = praser_expression(conditional_exp->child->next_sibling->next_sibling);
+
+        codePrinter.addCode("LABEL " + label2 + " :");
+
         node3 = praser_conditional_expression(conditional_exp->child->next_sibling->next_sibling->next_sibling->next_sibling);
+        
+        blockStack.pop_back();
+
+        return node1;
     }
 }
 varNode Praser::praser_logical_or_expression(ParseTree *logical_or_exp)
