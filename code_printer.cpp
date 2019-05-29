@@ -54,7 +54,7 @@ string CodePrinter::createCodeforParameter(varNode node)
 string CodePrinter::createCodeforReturn(varNode node)
 {
     string result;
-    result += "RETURN " + getNodeType(node) + " " + getNodeName(node);
+    result += "ret " + getNodeType(node) + " " + getNodeName(node);
     return result;
 }
 string CodePrinter::createCodeforArgument(varNode node)

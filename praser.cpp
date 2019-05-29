@@ -1817,6 +1817,16 @@ varNode Praser::createTempVar(string tempname, string temptype)
     tempNode.count = -1;
     tempNode.global_or_local = false;
     tempNode.useAddress = false;
+    string align;
+    if(temptype == "int" || temptype == "long")
+    {
+        align = "4";
+    }
+    else if(temptype == "float" || temptype == "doubke" || temptype == "long long")
+    {
+        align = "8";
+    }
+    codePrinter.addCode(tempNode.name + " = alloca " + op_math_map[temptype] + ", align " + align);
     return tempNode;
 }
 
