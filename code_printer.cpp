@@ -66,14 +66,24 @@ string CodePrinter::createCodeforArgument(varNode node)
 
 string CodePrinter::getNodeName(varNode node)
 {
+    string ret;
+    if(node.global_or_local)
+    {
+        ret = "@";
+    }
+    else
+    {
+        ret = "%";
+    }
+    
     if (node.useAddress) {
-		return "*" + node.name;
+		return ret + "*" + node.name;
 	}
 	else {
 		if (node.count < 0) {
-			return node.name;
+			return ret + node.name;
 		}
-		else return "var" + to_string(node.count);
+		else return ret + "var" + to_string(node.count);
 	}
 }
 

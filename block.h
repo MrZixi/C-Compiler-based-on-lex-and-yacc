@@ -9,7 +9,7 @@ using namespace std;
 struct varNode
 {
     //global then true
-    bool global_or_local;
+    bool global_or_local = false;
     bool useAddress = false;
     string boolValue;  
     string name, type;
@@ -21,7 +21,7 @@ struct varNode
 struct arrayNode
 {
     //global then true
-    bool global_or_local;  
+    bool global_or_local = false;  
     string name, type;
     int count = -1;
 };
@@ -29,7 +29,7 @@ struct arrayNode
 struct funcNode
 {
     //global then true
-     bool global_or_local;  
+     bool global_or_local = false;  
      bool is_defined;
      string name;
      string return_type;
