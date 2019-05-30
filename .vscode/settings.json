@@ -22,6 +22,7 @@
         "typeinfo": "cpp",
         "string": "cpp",
         "vector": "cpp",
-        "unordered_map": "cpp"
+        "unordered_map": "cpp",
+        "fstream": "cpp"
     } // 效果效果比cpptools要好
 }

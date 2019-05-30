@@ -6,6 +6,7 @@
 #include <cstdarg>
 #include <string>
 #include <cstring>
+#include <fstream>
 
 using namespace std;
 
@@ -27,7 +28,8 @@ public:
     ParseTree();
     ~ParseTree();
     void levalTrase();
+    ofstream file;
+    void eval(ParseTree* p,int level);
 };
 
-void eval(ParseTree* p,int level);
 #endif

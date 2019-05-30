@@ -73,6 +73,7 @@ void Praser::praserParseTree(ParseTree *temp_node)
 }
 void Praser::praser_parameter_list(ParseTree *node, string funcName, bool definite)
 {
+    if(node->name == ")") return;
     if (node->child->name == "parameter_list")
     {
         praser_parameter_list(node->child, funcName, definite);
@@ -336,9 +337,25 @@ void Praser::praser_init_declarator(string vartype, ParseTree *node)
                         tempVar3.type = "int";
                         blockStack.back()._var_map.insert({tempName3, tempVar3});
 
-                        codePrinter.addCode(tempName3 + " := #4");
-
-                        codePrinter.addCode(tnode.name + " := " + tempName3 + " * " + rnode.name);
+                        codePrinter.addCode("%" + tempName3 + " := #4");
+                        string global_or_not_tnode, global_or_not_rnode;
+                        if(tnode.global_or_local)
+                        {
+                            global_or_not_tnode = "@";
+                        }
+                        else
+                        {
+                            global_or_not_tnode = "%";
+                        }
+                        if(rnode.global_or_local)
+                        {
+                            global_or_not_rnode = "@";
+                        }
+                        else
+                        {
+                            global_or_not_rnode = "%";
+                        }
+                        codePrinter.addCode(global_or_not_tnode + tnode.name + " := " + "%" + tempName3 + " * " + global_or_not_rnode + rnode.name);
                     }
                     else if (arrayType == "double")
                     {
@@ -355,9 +372,25 @@ void Praser::praser_init_declarator(string vartype, ParseTree *node)
                         tempVar3.type = "int";
                         blockStack.back()._var_map.insert({tempName3, tempVar3});
 
-                        codePrinter.addCode(tempName3 + " := #8");
-
-                        codePrinter.addCode(tnode.name + " := " + tempName3 + " * " + rnode.name);
+                        codePrinter.addCode("%" + tempName3 + " := #8");
+ string global_or_not_tnode, global_or_not_rnode;
+                        if(tnode.global_or_local)
+                        {
+                            global_or_not_tnode = "@";
+                        }
+                        else
+                        {
+                            global_or_not_tnode = "%";
+                        }
+                        if(rnode.global_or_local)
+                        {
+                            global_or_not_rnode = "@";
+                        }
+                        else
+                        {
+                            global_or_not_rnode = "%";
+                        }
+                        codePrinter.addCode(global_or_not_tnode + tnode.name + " := " + "%" + tempName3 + " * " + global_or_not_rnode + rnode.name);
                     }
                     else if (arrayType == "bool")
                     {
@@ -1593,12 +1626,12 @@ varNode Praser::praser_postfix_expression(ParseTree *postfix_exp)
             {
                 codePrinter.addCode(tempName3 + " := #8");
             }
-            codePrinter.addCode(tempName2 + " := " + codePrinter.getNodeName(index_node) + " * " + tempName3);
-            codePrinter.addCode(tempName + " := &" + codePrinter.getarrayNodeName(array_node) + " + " + codePrinter.getNodeName(tempVar2));
+            codePrinter.addCode("%" + tempName2 + " := " + codePrinter.getNodeName(index_node) + " * " + "%" + tempName3);
+            codePrinter.addCode("%" + tempName + " := &" + codePrinter.getarrayNodeName(array_node) + " + " + codePrinter.getNodeName(tempVar2));
             return tempVar;
         }
 
-        codePrinter.addCode(tempName + " := &" + codePrinter.getarrayNodeName(array_node) + " + " + codePrinter.getNodeName(index_node));
+        codePrinter.addCode("%" + tempName + " := &" + codePrinter.getarrayNodeName(array_node) + " + " + codePrinter.getNodeName(index_node));
         return tempVar;
     }
     else if (postfix_exp->child->next_sibling->name == "(")
@@ -1784,11 +1817,21 @@ bool Praser::lookup_var_in_current_block(string name)
 varNode Praser::createTempVar(string tempname, string temptype)
 {
     varNode tempNode;
-    tempNode.name = tempname;
+    tempNode.name = "%" + tempname;
     tempNode.type = temptype;
     tempNode.count = -1;
     tempNode.global_or_local = false;
     tempNode.useAddress = false;
+    string align;
+    if(temptype == "int" || temptype == "long")
+    {
+        align = "4";
+    }
+    else if(temptype == "float" || temptype == "doubke" || temptype == "long long")
+    {
+        align = "8";
+    }
+    codePrinter.addCode(tempNode.name + " = alloca " + op_math_map[temptype] + ", align " + align);
     return tempNode;
 }
 

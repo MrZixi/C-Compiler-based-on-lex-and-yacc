@@ -130,24 +130,30 @@ void ParseTree::levalTrase()
     //         cout << endl;
     //     }
     // }
+    file.open("PT.txt");
     eval(this, 0);
+    file.close();
     cout << "successful Trase" <<endl;
 }
 
-void eval(ParseTree *p, int level)
+void ParseTree::eval(ParseTree *p, int level)
 {
     if (p != NULL)
     {
         for (int i = 0; i < level; i++)
         {
             cout << "+ ";
+            file << "+ ";
         }
         cout << p->name;
+        file << p->name;
         if (p->name == "IDENTIFIER"||p->name == "CONSTANT_INT"||p->name == "CONSTANT_FLOAT"||p->name == "CONSTANT_CHAR"||p->name == "STRING_LITERAL")
         {
             cout << ":" << p->content;
+            file << ":" << p->content;
         }
         cout << endl;
+        file << endl;
         eval(p->child, level + 1);
         eval(p->next_sibling, level);
     }
