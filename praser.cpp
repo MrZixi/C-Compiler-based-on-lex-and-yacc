@@ -73,7 +73,8 @@ void Praser::praserParseTree(ParseTree *temp_node)
 }
 void Praser::praser_parameter_list(ParseTree *node, string funcName, bool definite)
 {
-    if(node->name == ")") return;
+    if (node->name == ")")
+        return;
     if (node->child->name == "parameter_list")
     {
         praser_parameter_list(node->child, funcName, definite);
@@ -180,12 +181,12 @@ void Praser::praser_parameter_declaration(ParseTree *node, string funcName, bool
 
     if (definite)
     {
-        codePrinter.addCode(codePrinter.createCodeforParameter(newnode));
+        //codePrinter.addCode(codePrinter.createCodeforParameter(newnode));
     }
 }
 
 ParseTree *Praser::praser_declaration(ParseTree *node)
-{ 
+{
     ParseTree *declaration_specifiers = node->child;
     if (declaration_specifiers->next_sibling->name == ";")
     {
@@ -198,13 +199,12 @@ ParseTree *Praser::praser_declaration(ParseTree *node)
         praser_init_declarator_list(vartype, init);
         return node->next_sibling;
     }
-    
 
     if (vartype == "void")
     {
         error(node->line, "void type can't assign to variable"); //报错
     }
-   
+
     praser_init_declarator_list(vartype, init);
     return node->next_sibling;
 }
@@ -287,11 +287,11 @@ void Praser::praser_init_declarator(string vartype, ParseTree *node)
                     newFunc.name = funcName;
                     newFunc.return_type = funcType;
                     func_map.insert({funcName, newFunc});
-                    if(blockStack.size() == 1)
+                    if (blockStack.size() == 1)
                         newFunc.global_or_local = true;
                     praser_parameter_list(parameter_list, funcName, false);
                     string global_or_not;
-                    if(newFunc.global_or_local)
+                    if (newFunc.global_or_local)
                     {
                         global_or_not = "@";
                     }
@@ -300,11 +300,11 @@ void Praser::praser_init_declarator(string vartype, ParseTree *node)
                         global_or_not = "%";
                     }
                     string params = "";
-                    for(int i = 0;i < func_map[funcName].param_list.size();i++)
+                    for (int i = 0; i < func_map[funcName].param_list.size(); i++)
                     {
                         params += op_math_map[func_map[funcName].param_list[i].type] + " " + func_map[funcName].param_list[i].name;
-                        if(i != func_map[funcName].param_list.size() - 1)
-                        params += ",";
+                        if (i != func_map[funcName].param_list.size() - 1)
+                            params += ",";
                     }
                     codePrinter.addCode("declare " + op_math_map[funcType] + " " + global_or_not + funcName + "(" + params + ")");
                 }
@@ -339,7 +339,7 @@ void Praser::praser_init_declarator(string vartype, ParseTree *node)
 
                         codePrinter.addCode("%" + tempName3 + " := #4");
                         string global_or_not_tnode, global_or_not_rnode;
-                        if(tnode.global_or_local)
+                        if (tnode.global_or_local)
                         {
                             global_or_not_tnode = "@";
                         }
@@ -347,7 +347,7 @@ void Praser::praser_init_declarator(string vartype, ParseTree *node)
                         {
                             global_or_not_tnode = "%";
                         }
-                        if(rnode.global_or_local)
+                        if (rnode.global_or_local)
                         {
                             global_or_not_rnode = "@";
                         }
@@ -373,8 +373,8 @@ void Praser::praser_init_declarator(string vartype, ParseTree *node)
                         blockStack.back()._var_map.insert({tempName3, tempVar3});
 
                         codePrinter.addCode("%" + tempName3 + " := #8");
- string global_or_not_tnode, global_or_not_rnode;
-                        if(tnode.global_or_local)
+                        string global_or_not_tnode, global_or_not_rnode;
+                        if (tnode.global_or_local)
                         {
                             global_or_not_tnode = "@";
                         }
@@ -382,7 +382,7 @@ void Praser::praser_init_declarator(string vartype, ParseTree *node)
                         {
                             global_or_not_tnode = "%";
                         }
-                        if(rnode.global_or_local)
+                        if (rnode.global_or_local)
                         {
                             global_or_not_rnode = "@";
                         }
@@ -487,38 +487,40 @@ ParseTree *Praser::praser_function_definition(ParseTree *function_def)
     declarator = function_def->child->next_sibling;
     compound_statement = function_def->child->next_sibling;
 
-	string funcType = type_specifier->child->content;
-	string funcName = declarator->child->child->content;
+    string funcType = type_specifier->child->content;
+    string funcName = declarator->child->child->content;
 
+    bool isdeclared = false;
+    funcNode declarFunc;
+    if (func_map.find(funcName) != func_map.end())
+    {
+        //repeated definition
+        if (func_map[funcName].is_defined)
+        {
+            error(declarator->child->child->line, "Function " + funcName + " is duplicated definition.");
+        }
+        //函数事先声明过但是没有定义
+        else
+        {
+            isdeclared = true;
+            //先删除掉函数池中的函数的声明
+            declarFunc = func_map[funcName];
+            func_map.erase(func_map.find(funcName));
+        }
+    }
 
-	bool isdeclared = false;
-	funcNode declarFunc;
-	if (func_map.find(funcName) != func_map.end()) {
-		//repeated definition
-		if (func_map[funcName].is_defined) {
-			error(declarator->child->child->line, "Function " + funcName + " is duplicated definition.");
-		}
-		//函数事先声明过但是没有定义
-		else {
-			isdeclared = true;
-			//先删除掉函数池中的函数的声明
-			declarFunc = func_map[funcName];
-			func_map.erase(func_map.find(funcName));
-		}
-	}
-
-	//进入新的block
-	block funBlock;
-	funBlock.isFunc = true;
-	funBlock._func.name = funcName;
-	funBlock._func.return_type = funcType;
-	funBlock._func.is_defined = true;
-    if(blockStack.size() == 1)
+    //进入新的block
+    block funBlock;
+    funBlock.isFunc = true;
+    funBlock._func.name = funcName;
+    funBlock._func.return_type = funcType;
+    funBlock._func.is_defined = true;
+    if (blockStack.size() == 1)
     {
         funBlock._func.global_or_local = true;
     }
     string global_or_not;
-    if(funBlock._func.global_or_local)
+    if (funBlock._func.global_or_local)
     {
         global_or_not = "@";
     }
@@ -526,35 +528,39 @@ ParseTree *Praser::praser_function_definition(ParseTree *function_def)
     {
         global_or_not = "%";
     }
-    
-	//将函数记录在块内并添加到函数池
-	blockStack.push_back(funBlock);
-	func_map.insert({funcName, funBlock._func});
-    
-	//获取函数形参列表
-    if(declarator->child->child->name == "direct_declarator")
-    {
-         if(declarator->child->child->next_sibling->next_sibling->name == ")")
-         {
 
-         }
-        else if(declarator->child->child->next_sibling->next_sibling->child->name == "parameter_list")
+    //将函数记录在块内并添加到函数池
+    blockStack.push_back(funBlock);
+    func_map.insert({funcName, funBlock._func});
+
+    //获取函数形参列表
+    if (declarator->child->child->name == "direct_declarator")
+    {
+        if (declarator->child->child->next_sibling->next_sibling->name == ")")
+        {
+        }
+        else if (declarator->child->child->next_sibling->next_sibling->child->name == "parameter_list")
         {
             praser_parameter_list(declarator->child->child->next_sibling->next_sibling->child, funcName, true);
         }
     }
-	string params = "";
-    for(int i = 0;i < func_map[funcName].param_list.size();i++)
+    string params = "";
+    for (int i = 0; i < func_map[funcName].param_list.size(); i++)
     {
         params += op_math_map[func_map[funcName].param_list[i].type] + " " + func_map[funcName].param_list[i].name;
-        if(i != func_map[funcName].param_list.size() - 1)
+        if (i != func_map[funcName].param_list.size() - 1)
             params += ",";
     }
     codePrinter.addCode("define " + op_math_map[funcType] + " " + global_or_not + funcName + "(" + params + ")");
-	//此时函数池中的func已经添加了参数列表
-	funcNode func = func_map[funcName];
-	//如果函数事先声明过，则比较函数的参数列表和返回类型
-	if (isdeclared) 
+    for (int i = 0; i < func_map[funcName].param_list.size(); i++)
+    {
+        varNode para = func_map[funcName].param_list[i];
+        codePrinter.addCode(codePrinter.createCodeforParameter(para));
+    }
+    //此时函数池中的func已经添加了参数列表
+    funcNode func = func_map[funcName];
+    //如果函数事先声明过，则比较函数的参数列表和返回类型
+    if (isdeclared)
     {
         if (func.return_type != declarFunc.return_type)
         {
@@ -562,24 +568,24 @@ ParseTree *Praser::praser_function_definition(ParseTree *function_def)
         }
         if (func.param_list.size() != declarFunc.param_list.size())
         {
-			error(declarator->child->line, "The number of function parameters doesn't equal to the function declared before.");
-		}
-		for (int i = 0; i < declarFunc.param_list.size(); i++) 
+            error(declarator->child->line, "The number of function parameters doesn't equal to the function declared before.");
+        }
+        for (int i = 0; i < declarFunc.param_list.size(); i++)
         {
-			if (func.param_list[i].type != declarFunc.param_list[i].type)
-				error(declarator->child->line, "The parameter " + declarFunc.param_list[i].name + "'s type doesn't equal to the function declared before." );
-		}
-	}
-	//更新Block中func的参数列表
-	funBlock._func = func;
-	//分析函数的正文
-   
-	praser_compound_statement(compound_statement);
+            if (func.param_list[i].type != declarFunc.param_list[i].type)
+                error(declarator->child->line, "The parameter " + declarFunc.param_list[i].name + "'s type doesn't equal to the function declared before.");
+        }
+    }
+    //更新Block中func的参数列表
+    funBlock._func = func;
+    //分析函数的正文
 
-	//函数结束后，弹出相应的block
-	blockStack.pop_back();
+    praser_compound_statement(compound_statement);
 
-	return function_def->next_sibling;
+    //函数结束后，弹出相应的block
+    blockStack.pop_back();
+
+    return function_def->next_sibling;
 }
 ParseTree *Praser::praser_statement(ParseTree *statment)
 {
@@ -1823,11 +1829,11 @@ varNode Praser::createTempVar(string tempname, string temptype)
     tempNode.global_or_local = false;
     tempNode.useAddress = false;
     string align;
-    if(temptype == "int" || temptype == "long")
+    if (temptype == "int" || temptype == "long")
     {
         align = "4";
     }
-    else if(temptype == "float" || temptype == "doubke" || temptype == "long long")
+    else if (temptype == "float" || temptype == "doubke" || temptype == "long long")
     {
         align = "8";
     }

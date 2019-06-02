@@ -233,7 +233,7 @@ equality_expression:
         $$ = new ParseTree("equality_expression", 3, $1, $2, $3);
     }
 	| equality_expression NE_OP relational_expression {
-        $$ = new ParseTree("equality_expression", 1, $1, $2, $3);
+        $$ = new ParseTree("equality_expression", 3, $1, $2, $3);
     }
 	;
 

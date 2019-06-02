@@ -1552,7 +1552,7 @@ case 48:
 case 49:
 #line 235 "grammar.y"
 {
-        yyval.pt = new ParseTree("equality_expression", 1, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
+        yyval.pt = new ParseTree("equality_expression", 3, yyvsp[-2].pt, yyvsp[-1].pt, yyvsp[0].pt);
     ;
     break;}
 case 50:
